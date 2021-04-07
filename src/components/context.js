@@ -1,6 +1,7 @@
 import Icons from "uikit/dist/js/uikit-icons";
 import UIkit from "uikit";
 import Dom from "./dom/dom.js";
+import ReportParser from "./report/parser.js";
 import { v4 as uuidv4 } from "uuid";
 
 UIkit.use(Icons);
@@ -12,4 +13,7 @@ const context = {
 
     UIkit,
     Dom,
-}
+    ReportParser,
+};
+
+export default context;
