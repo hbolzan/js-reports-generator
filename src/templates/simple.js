@@ -4,7 +4,7 @@ const emptyThClass = "empty-th";
 
 const SimpleTemplate = params => {
     return {
-        content: data => ["section",
+        render: data => ["section",
                           ["header",
                            "h3", params.title],
                           ["table",
@@ -14,7 +14,7 @@ const SimpleTemplate = params => {
                           ["footer",
                            ["h4", params.footer]]],
 
-        style: "",
+        style: params.style,
     };
 };
 

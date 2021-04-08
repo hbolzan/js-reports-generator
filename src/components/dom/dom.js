@@ -1,9 +1,18 @@
 import { hiccupToObj, objToHtml, indexNodes } from "../../logic/hiccup.js";
 
-function Dom({ document, uuidGen, i18n }, hiccup) {
+function Dom({ document, uuidGen, i18n }, hiccup, css = "") {
     const asObj = hiccupToObj(hiccup, uuidGen),
           hiccupHashMap = indexNodes(asObj),
-          asHtml = objToHtml(asObj);
+          asHtml = objToHtml(asObj),
+          styleSheetId = "report-gen-style";
+
+    function newStyleSheet() {
+        const styleSheet = document.createElement("style");
+        styleSheet.id = styleSheetId;
+        document.appendChild(styleSheet);
+        return styleSheet;
+    }
+    (document.getElementById(styleSheetId) || newStyleSheet()).innerHTML = css;
 
     function asDomNode() {
         const el = document.createElement("template");
