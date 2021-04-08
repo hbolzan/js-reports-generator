@@ -9,7 +9,7 @@ function Dom({ document, uuidGen, i18n }, hiccup, css = "") {
     function newStyleSheet() {
         const styleSheet = document.createElement("style");
         styleSheet.id = styleSheetId;
-        document.appendChild(styleSheet);
+        document.head.appendChild(styleSheet);
         return styleSheet;
     }
     (document.getElementById(styleSheetId) || newStyleSheet()).innerHTML = css;
