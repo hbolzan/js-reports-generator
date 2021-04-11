@@ -1,28 +1,3 @@
-const units = {
-    mm: x => `${ x }mm`,
-    cm: x => `${ x }cm`,
-    inches: x => `${ x }in`,
-    px: x => `${ x }px`,
-    em: x => `${ x }em`,
-};
-
-const pageSettings = {
-
-    size: {
-        A3: "A3",
-        A4: "A4",
-        A5: "A5",
-        letter: "letter",
-        legal: "legal",
-    },
-
-    orientation: {
-        portrait: "portrait",
-        landscape: "landscape",
-    }
-
-};
-
 const borderStyles = [
     "tr td:not(:last-child), tr th:not(:last-child) {border-right: 1px solid #e5e5e5;}",
     "tbody tr td {border-top: 1px solid #e5e5e5;}",
@@ -48,20 +23,15 @@ const defaultPageStyle = {
     mediaPrint: {
 
         page: {
-            size: pageSettings.size.A4,
-            orientation: pageSettings.orientation.portrait,
-            margins: {
-                left: units.mm(15),
-                top: units.mm(10),
-                right: units.mm(15),
-                bottom: units.mm(5),
-            }
+            size: "A4",
+            orientation: "portrait",
+            margins: {unit: "mm", left: 15, top: 10, right: 15, bottom: 5 }
         },
 
         html: {
-            fontSize: units.px(12),
+            fontSize: "12px",
             lineHeight: 0.8,
-            marginBottom: units.mm(30),
+            marginBottom: "30mm",
         },
 
         styles: [
@@ -73,4 +43,4 @@ const defaultPageStyle = {
     }
 };
 
-export { units, pageSettings, defaultPageStyle };
+export { defaultPageStyle };
