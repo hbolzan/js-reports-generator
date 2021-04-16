@@ -1,5 +1,5 @@
 const schema = require("schm");
-import { boolParse } from "../logic/misc.js";
+import { boolParse, identity } from "../logic/misc.js";
 import { sum } from "../logic/aggregators.js";
 
 const Margins = schema({
@@ -24,8 +24,7 @@ const PageStyle = schema({
 const Column = schema({
     name: String,
     label: String,
-    formula: { type: Function, default: () => (row, column, data) => row[column.name] },
-    result: { type: Function, default: () => x => x },
+    value: { type: Function, default: () => function(row, data) { return row[this.name]; } },
     width: Number,
     visible: { type: Boolean, default: true },
     dataType: { type: String, enum: [String, Number, Boolean], default: String },
@@ -39,26 +38,37 @@ const Aggregator = schema({
     compute: { type: Function, default: () => sum },
 });
 
-const Group = schema({
+const Grouping = schema({
     columns: [Column],
-    title: Function,
-    showTotals: Boolean,
+    title: { type: Function, default: () => identity },
+    showAggregates: { type: Boolean, default: true },
+});
+
+const DataSettings = schema({
+    columns: [Column],
+    aggregators: [Aggregator],
+    grouping: Grouping,
+    orderBy: [String],
 });
 
 const ReportSettings = schema({
     name: String,
     title: String,
+    owner: {
+        name: { type: String, default: "MiniPCP" },
+        address: String,
+        phone: String,
+        email: String,
+        logo: String,
+    },
     page: Page,
     media: {
         screen: PageStyle,
         print: PageStyle,
     },
 
-    columns: [Column],
-    aggregators: [Aggregator],
-    group: Group,
-    orderBy: [String],
+    data: DataSettings,
 });
 
 export default ReportSettings;
-export { Margins, Column, Page, PageStyle };
+export { Margins, PageStyle, Column, Page, Aggregator, Grouping, DataSettings };

@@ -1,4 +1,4 @@
-import { boolParse } from "../../src/logic/misc.js";
+import { boolParse, pipe } from "../../src/logic/misc.js";
 
 describe("boolParse", () => {
     it("converts input to a boolean result", () => {
