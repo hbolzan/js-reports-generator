@@ -20,7 +20,7 @@ const data = {
         { id: 1, name: "John Doe", addr: "Rua dos Bobos, número Zero"},
         { id: 2, name: "Jack Sparrow", addr: "Pirate Ship"},
         { id: 3, name: "Donald Trump", addr: "Trump Tower, NY"},
-        { id: 4, name: "João Dória", addr: "Palácio do Baneirantes"},
+        { id: 4, name: "João Dória", addr: "Palácio dos Bandeirantes"},
     ],
 };
 

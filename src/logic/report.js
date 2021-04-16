@@ -4,8 +4,9 @@ if (window._ == undefined) {
 import { camelToKebab } from "./hiccup.js";
 
 function marginsToCSS(margins) {
+    const toMargin = key => `margin-${ key }: ${ margins[key] }${ margins.unit }`;
     return margins ?
-        `margin-left: ${ margins.left }; margin-top: ${ margins.top }; margin-right: ${ margins.right }; margin-bottom: ${ margins.bottom }` :
+        ["left", "top", "right", "bottom"].map(k => `${ toMargin(k) }`).join("; ") :
         "";
 }
 
