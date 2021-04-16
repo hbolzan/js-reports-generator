@@ -6,11 +6,14 @@ import {
     group,
     sortDocuments,
     sort,
-    initials,
-    aggregatorsReducer,
     aggregateRows,
+    coerce,
+    parsedColumn,
+    parseRow,
+    withAttrs,
+    prepare,
 } from "../../src/logic/data-handling.js";
-import { sum, avg } from "../../src/logic/aggregators.js";
+import { sum, avg, concat } from "../../src/logic/aggregators.js";
 import { constantly } from "../../src/logic/misc.js";
 
 
@@ -137,105 +140,165 @@ describe("data sorting", () => {
     });
 });
 
-const columnA = Column.parse({ name: "a" }),
-      columnB = Column.parse({ name: "b" }),
-      columnC = Column.parse({ name: "c" }),
-      aggrSumA = Aggregator.parse({ column: columnA, compute: sum }),
-      aggrSumB = Aggregator.parse({ column: columnB, compute: sum }),
-      aggrAvgA = Aggregator.parse({ column: columnA, compute: avg }),
-      aggrConcatC = Aggregator.parse(
-          {
-              column: columnC,
-              compute: (x, y) => x + (x !== "" ? ", " : "") + String(y),
-              initial: constantly(""),
-          }
-      );
-
-describe("initials", () => {
-    it("returns an object with initial values for aggregators", () => {
-        expect(initials([])).toEqual({});
-        expect(initials([aggrSumA])).toEqual({ a: 0 });
-        expect(initials([aggrSumA, aggrSumB])).toEqual({ a: 0, b: 0 });
-        expect(initials([aggrSumA, aggrSumB, aggrConcatC])).toEqual({ a: 0, b: 0, c: "" });
-    });
-});
-
-describe("aggregatorsReducer", () => {
-    it("computes all aggregators for the current row", () => {
-        expect(aggregatorsReducer({ a: 3, b: 5 }, { a: 5, b: 0 }, aggrSumA)).toEqual({ a: 8, b: 0 });
-        expect(aggregatorsReducer({ a: 3, b: 5 }, { a: 8, b: 2 }, aggrSumB)).toEqual({ a: 8, b: 7 });
-        expect(aggregatorsReducer({ a: 1, b: 2, c: "a" }, { c: "" }, aggrConcatC)).toEqual({ c: "a" });
-        expect(aggregatorsReducer({ a: 1, b: 2, c: "b" }, { c: "a" }, aggrConcatC)).toEqual({ c: "a, b" });
-    });
-});
-
 describe("aggregateRows", () => {
+    const columnA = Column.parse({ name: "a" }),
+          columnB = Column.parse({ name: "b" }),
+          columnC = Column.parse({ name: "c" }),
+          aggrSumA = Aggregator.parse({ column: columnA, compute: sum }),
+          aggrSumB = Aggregator.parse({ column: columnB, compute: sum }),
+          aggrAvgA = Aggregator.parse({ column: columnA, compute: avg }),
+          aggrConcatC = Aggregator.parse({ column: columnC, compute: concat(", ") });
+
     const rows = [
-        { ga: 1, gb: 2, a: 3, b: 5 },
-        { ga: 1, gb: 2, a: 4, b: 5 },
-        { ga: 2, gb: 2, a: 3, b: 5 },
-        { ga: 2, gb: 2, a: 3, b: 10 },
+        { ga: 1, gb: 2, a: 3, b: 5, c: "a" },
+        { ga: 1, gb: 2, a: 4, b: 5, c: "b" },
+        { ga: 2, gb: 2, a: 3, b: 5, c: "c" },
+        { ga: 2, gb: 2, a: 3, b: 10, c: "d" },
     ];
     it("aggregates columns for all rows following agregator rules", () => {
         expect(aggregateRows(rows, [aggrSumA])).toEqual({ a: 13 });
         expect(aggregateRows(rows, [aggrSumB])).toEqual({ b: 25 });
         expect(aggregateRows(rows, [aggrSumA, aggrSumB])).toEqual({ a: 13, b: 25 });
+        expect(aggregateRows(rows, [aggrAvgA, aggrConcatC])).toEqual({ a: 3.25, c: "a, b, c, d" });
     });
 });
 
-// describe("prepare", () => {
+describe("coerce", () => {
+    it("coerces value to data type", () => {
+        expect(coerce("a", String)).toBe("a");
+        expect(coerce(1, String)).toBe("1");
+        expect(coerce(1, Number)).toBe(1);
+        expect(coerce("1", Number)).toBe(1);
+        expect(coerce("a", Number)).toBeNaN();
+        expect(coerce("S", Boolean)).toBe(true);
+        expect(coerce("N", Boolean)).toBe(false);
+    });
+});
 
-//     const rawData = {
-//         rows: [
-//             { a: "b", b: "d", c: "a", d: "c" },
-//             { a: "a", b: "b", c: "c", d: "d" },
-//             { a: "b", b: "d", c: "b", d: "b" },
-//             { a: "a", b: "b", c: "d", d: "e" },
-//             { a: "a", b: "c", c: "a", d: "b" },
-//             { a: "a", b: "b", c: "d", d: "f" },
-//             { a: "a", b: "c", c: "a", d: "c" },
-//             { a: "b", b: "d", c: "c", d: "b" },
-//             { a: "b", b: "d", c: "d", d: "d" },
-//             { a: "a", b: "b", c: "d", d: "d" },
-//             { a: "a", b: "b", c: "c", d: "d" },
-//         ]
-//     };
+describe("parsedColumn", () => {
+    it("parses column value for a rawData row", () => {
+        const calculatedColumn = Column.parse({
+            name: "x",
+            dataType: Number,
+            value: (row, data) => row.a * row.b * row.c,
+        });
+        expect(parsedColumn(Column.parse({ name: "a" }), { a: "abcd" })).toBe("abcd");
+        expect(parsedColumn(Column.parse({ name: "b" }), { b: "xyz" })).toBe("xyz");
+        expect(parsedColumn(Column.parse({ name: "a", dataType: Boolean }), { a: "N" })).toBe(false);
+        expect(parsedColumn(calculatedColumn, { a: 2, b: 4, c: 8 })).toBe(64);
+    });
+});
 
-//     const groups = [
-//         {
-//             groupValues: { a: 1, b: 1 },
-//             rows: [{ a: 1, b: 1, c: "a", d: "b", e: "c" }, { a: 1, b: 1, c: "b", d: "c", e: "d" }]
-//         },
+describe("withAttrs", () => {
+    const groups = [
+        { groupValues: { a: 1 }, rows: [{ a: 1,  b: 1 }, { a: 1,  b: 2 },], },
+        { groupValues: { a: 2 }, rows: [{ a: 2,  b: 1 }, { a: 2,  b: 2 },], },
+        { groupValues: { a: 3 }, rows: [{ a: 3,  b: 1 }, { a: 3,  b: 2 },], },
+    ];
+    it("applies a list of attrs assigners to each group", () => {
+        expect(withAttrs(
+            [
+                group => ({ ...group, a: group.groupValues.a }),
+                group => ({ ...group, b: group.groupValues.a*2 }),
+            ],
+            groups
+        )).toEqual(
+            [
+                { groupValues: { a: 1 }, rows: [{ a: 1,  b: 1 }, { a: 1,  b: 2 },], a: 1, b: 2 },
+                { groupValues: { a: 2 }, rows: [{ a: 2,  b: 1 }, { a: 2,  b: 2 },], a: 2, b: 4 },
+                { groupValues: { a: 3 }, rows: [{ a: 3,  b: 1 }, { a: 3,  b: 2 },], a: 3, b: 6 },
+            ]
+        );
+    });
+});
 
-//         {
-//             groupValues: { a: 1, b: 2 },
-//             rows: [{ a: 1, b: 2, c: "c", d: "d", e: "e" }, { a: 1, b: 2, c: "a", d: "b", e: "c" }]
-//         },
+describe("parseRow", () => {
+    const columnA = Column.parse({ name: "a" }),
+          columnF = Column.parse({ name: "f", dataType: Number }),
+          columnX = Column.parse({ name: "x", dataType: Number, value: row => 2*row.f });
+    it("evaluates each column and return parsed row", () => {
+        expect(parseRow([columnA], { a: 1 })).toEqual({ a: "1" });
+        expect(parseRow([columnA, columnF], { a: "a", f: 2 })).toEqual({ a: "a", f: 2 });
+        expect(parseRow([columnA, columnF, columnX], { a: "a", f: 2 })).toEqual({ a: "a", f: 2, x: 4 });
+    });
+});
 
-//         {
-//             groupValues: { a: 2, b: 1 },
-//             rows: [{ a: 2, b: 1, c: "d", d: "e", e: "f" }, { a: 2, b: 1, c: "g", d: "h", e: "i" }]
-//         },
+describe.only("prepare", () => {
 
-//         {
-//             groupValues: { a: 2, b: 2 },
-//             rows: [{ a: 2, b: 2, c: "j", d: "k", e: "l" }, { a: 2, b: 2, c: "a", d: "b", e: "c" }]
-//         },
+    const rawData = [
+        { a: "b", b: "d", c: "a", d: "c", f: 5 },
+        { a: "a", b: "b", c: "c", d: "d", f: 2 },
+        { a: "b", b: "d", c: "b", d: "b", f: 8 },
+        { a: "a", b: "b", c: "d", d: "e", f: 3 },
+        { a: "a", b: "c", c: "a", d: "b", f: 9 },
+        { a: "a", b: "b", c: "d", d: "f", f: 1 },
+        { a: "a", b: "c", c: "a", d: "c", f: 4 },
+        { a: "b", b: "d", c: "c", d: "b", f: 7 },
+        { a: "b", b: "d", c: "d", d: "d", f: 0 },
+        { a: "a", b: "b", c: "d", d: "d", f: 6 },
+        { a: "a", b: "b", c: "c", d: "d", f: 1 },
+    ];
 
-//         {
-//             groupValues: { a: 3, b: 1 },
-//             rows: [{ a: 3, b: 1, c: "d", d: "d", e: "e" }, { a: 3, b: 1, c: "f", d: "g", e: "h" }]
-//         },
-//     ];
+    const groups = [
+        {
+            title: "Group a+b",
+            groupValues: { a: "a", b: "b" },
+            rows: [
+                { a: "a", b: "b", c: "c", d: "d", f: 1, x: 2 },
+                { a: "a", b: "b", c: "c", d: "d", f: 2, x: 4 },
+                { a: "a", b: "b", c: "d", d: "d", f: 6, x: 12 },
+                { a: "a", b: "b", c: "d", d: "e", f: 3, x: 6 },
+                { a: "a", b: "b", c: "d", d: "f", f: 1, x: 2 },
+            ],
+            aggregates: { d: "d/d/d/e/f", f: 13, x: 5.2 },
+        },
 
-//     const dataSettings = {
-//         grouping: {
-//             columns: ["a", "b"],
-//         },
-//         orderBy: ["c"],
-//     };
+        {
+            title: "Group a+c",
+            groupValues: { a: "a", b: "c" },
+            rows: [
+                { a: "a", b: "c", c: "a", d: "b", f: 9, x: 18 },
+                { a: "a", b: "c", c: "a", d: "c", f: 4, x: 8 },
+            ],
+            aggregates: { d: "b/c", f: 13, x: 13 },
+        },
 
-//     it("converts raw data into groups list", () => {
-//         expect(prepare(rawData, dataSettings)).toEqual(groups);
-//     });
-// });
+        {
+            title: "Group b+d",
+            groupValues: { a: "b", b: "d" },
+            rows: [
+                { a: "b", b: "d", c: "a", d: "c", f: 5, x: 10 },
+                { a: "b", b: "d", c: "b", d: "b", f: 8, x: 16 },
+                { a: "b", b: "d", c: "c", d: "b", f: 7, x: 14 },
+                { a: "b", b: "d", c: "d", d: "d", f: 0, x: 0 },
+            ],
+            aggregates: { d: "c/b/b/d", f: 20, x: 10 },
+        },
+
+    ];
+
+    const columnA = Column.parse({ name: "a" }),
+          columnB = Column.parse({ name: "b" }),
+          columnC = Column.parse({ name: "c" }),
+          columnD = Column.parse({ name: "d" }),
+          columnF = Column.parse({ name: "f", dataType: Number }),
+          columnX = Column.parse({ name: "x", dataType: Number, value: row => 2*row.f }),
+          aggrSumF = Aggregator.parse({ column: columnF, compute: sum }),
+          aggrAvgX = Aggregator.parse({ column: columnX, compute: avg }),
+          aggrConcatD = Aggregator.parse({ column: columnD, compute: concat("/") });
+
+    const dataSettings = {
+        columns: [columnA, columnB, columnC, columnD, columnF, columnX],
+        aggregators: [aggrConcatD, aggrSumF, aggrAvgX],
+        grouping: {
+            title: group => `Group ${ group.groupValues.a }+${ group.groupValues.b }`,
+            columns: [columnA, columnB],
+        },
+        orderBy: [columnC, columnD, columnF],
+    };
+
+    // console.log(JSON.stringify(prepare(rawData, dataSettings), null, 2));
+    it("converts raw data into groups list", () => {
+        expect(prepare(rawData, dataSettings)).toEqual(groups);
+    });
+});

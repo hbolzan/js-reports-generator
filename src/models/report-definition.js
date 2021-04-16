@@ -27,7 +27,7 @@ const Column = schema({
     value: { type: Function, default: () => function(row, data) { return row[this.name]; } },
     width: Number,
     visible: { type: Boolean, default: true },
-    dataType: { type: String, enum: [String, Number, Boolean], default: String },
+    dataType: { type: Function, enum: [String, Number, Boolean], default: () => String },
     viewType: { type: String, enum: ["text", "bool", "image"], default: "text", },
     numberFormat: String,
     boolParse: { type: Function, default: () => boolParse },
@@ -36,7 +36,6 @@ const Column = schema({
 const Aggregator = schema({
     column: Column,
     compute: { type: Function, default: () => sum },
-    initial: { type: Function, default: () => constantly(0) },
 });
 
 const Grouping = schema({

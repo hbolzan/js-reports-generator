@@ -1,4 +1,8 @@
-const sum = (total, value) => total + Number(value);
+const sum = (column, rows) => rows.reduce((total, row) => total + Number(row[column.name]), 0);
+const concat = glue => (column, rows) => rows.reduce(
+    (result, row) =>  result + (result !== "" ? glue : "") + String(row[column.name]),
+    ""
+);
 const count = (column, rows) => rows.length;
 
 const avg = (column, rows) => {
@@ -6,7 +10,8 @@ const avg = (column, rows) => {
     return c > 0 ? sum(column, rows) / c : null;
 };
 
-const weightedMean = (weightColumn, column, rows) => {
+
+const weightedMean = weightColumn => (column, rows) => {
     const w = weightColumn.name,
           c = column.name,
           totals = rows.reduce(
@@ -21,4 +26,4 @@ const weightedMean = (weightColumn, column, rows) => {
     return totals.w !== 0 ? totals.v / totals.w : null;
 };
 
-export { sum, count, avg, weightedMean };
+export { sum, concat, count, avg, weightedMean };

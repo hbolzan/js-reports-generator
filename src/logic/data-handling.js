@@ -2,7 +2,7 @@ if (window._ == undefined) {
     window._ = require("lodash");
 }
 
-import { pipe } from "./misc.js";
+import { pipe, boolParse } from "./misc.js";
 
 function group(rows, columns) {
     const groupGetters = columns.map(column => row => row[column]),
@@ -36,22 +36,55 @@ function sort(groups, groupingColumns, orderBy) {
     );
 }
 
-const initials = aggregators => aggregators.reduce(
-    (result, a) => ({ ...result, [a.column.name]: a.initial() }),
+function aggregateRows(rows, aggregators) {
+    return aggregators.reduce(
+        (result, a) => ({ ...result, [a.column.name]: a.compute(a.column, rows) }),
+        {}
+    );
+}
+
+function coerce(value, dataType) {
+    if (dataType === Boolean) {
+        return boolParse(value);
+    }
+    return dataType(value);
+}
+
+function parsedColumn(column, row, data) {
+    return coerce(column.value(row, data), column.dataType);
+}
+
+const parseRow = (columns, row) => columns.reduce(
+    (newRow, column) => ({ ...newRow, [column.name]: parsedColumn(column, row) }),
     {}
 );
 
-function aggregatorsReducer(row, aggregated, a) {
-    const name = a.column.name;
-    return { ...aggregated, [name]: a.compute(aggregated[name], row[name]) };
-}
+const parseRows = (columns, rows) => rows.map(_.partial(parseRow, columns));
+const withTitle = (groupSettings, group) => ({ ...group, title: groupSettings.title(group) });
+const withAggregates = (aggregators, group) => ({
+    ...group,
+    aggregates: aggregateRows(group.rows, aggregators),
+});
+const withAttrs = (assigners, groups) => groups.map(
+    group => assigners.reduce((g, assigner) => assigner(g), group)
+);
 
-function rowsReducer(aggregators, aggregated, row) {
-    return aggregators.reduce(_.partial(aggregatorsReducer, row), aggregated);
-}
-
-function aggregateRows(rows, aggregators) {
-    return rows.reduce(_.partial(rowsReducer, aggregators), initials(aggregators));
+function prepare(rawData, dataSettings) {
+    const groupColumns = dataSettings.grouping.columns.map(c => c.name),
+          sortColumns = dataSettings.orderBy.map(c => c.name);
+    return pipe(
+        rawData,
+        [
+            _.partial(parseRows, dataSettings.columns),
+            _.partialRight(group, groupColumns),
+            _.partialRight(withGroupValues, groupColumns),
+            _.partialRight(sort, groupColumns, sortColumns),
+            _.partial(withAttrs, [
+                _.partial(withTitle, dataSettings.grouping),
+                _.partial(withAggregates, dataSettings.aggregators),
+            ]),
+        ]
+    );
 }
 
 export {
@@ -60,7 +93,10 @@ export {
     group,
     sortDocuments,
     sort,
-    initials,
-    aggregatorsReducer,
     aggregateRows,
+    coerce,
+    parsedColumn,
+    parseRow,
+    withAttrs,
+    prepare,
 };
