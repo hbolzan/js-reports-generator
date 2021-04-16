@@ -12,6 +12,7 @@ function boolParse(x) {
 }
 
 const identity = x => x;
+const constantly = x => () => x;
 const pipe = (value, functions) => functions.reduce((v, f) => f(v), value);
 
-export { trace, boolParse, identity, pipe };
+export { trace, boolParse, identity, constantly, pipe };

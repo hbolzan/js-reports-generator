@@ -1,5 +1,5 @@
 const schema = require("schm");
-import { boolParse, identity } from "../logic/misc.js";
+import { boolParse, identity, constantly } from "../logic/misc.js";
 import { sum } from "../logic/aggregators.js";
 
 const Margins = schema({
@@ -36,6 +36,7 @@ const Column = schema({
 const Aggregator = schema({
     column: Column,
     compute: { type: Function, default: () => sum },
+    initial: { type: Function, default: () => constantly(0) },
 });
 
 const Grouping = schema({

@@ -36,4 +36,31 @@ function sort(groups, groupingColumns, orderBy) {
     );
 }
 
-export { groupValues, withGroupValues, group, sortDocuments, sort };
+const initials = aggregators => aggregators.reduce(
+    (result, a) => ({ ...result, [a.column.name]: a.initial() }),
+    {}
+);
+
+function aggregatorsReducer(row, aggregated, a) {
+    const name = a.column.name;
+    return { ...aggregated, [name]: a.compute(aggregated[name], row[name]) };
+}
+
+function rowsReducer(aggregators, aggregated, row) {
+    return aggregators.reduce(_.partial(aggregatorsReducer, row), aggregated);
+}
+
+function aggregateRows(rows, aggregators) {
+    return rows.reduce(_.partial(rowsReducer, aggregators), initials(aggregators));
+}
+
+export {
+    groupValues,
+    withGroupValues,
+    group,
+    sortDocuments,
+    sort,
+    initials,
+    aggregatorsReducer,
+    aggregateRows,
+};

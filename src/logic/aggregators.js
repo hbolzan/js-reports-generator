@@ -1,4 +1,4 @@
-const sum = (column, rows) => rows.reduce((total, row) => total + Number(row[column.name]), 0);
+const sum = (total, value) => total + Number(value);
 const count = (column, rows) => rows.length;
 
 const avg = (column, rows) => {
