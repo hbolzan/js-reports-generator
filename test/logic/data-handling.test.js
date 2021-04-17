@@ -223,7 +223,7 @@ describe("parseRow", () => {
     });
 });
 
-describe.only("prepare", () => {
+describe("prepare", () => {
 
     const rawData = [
         { a: "b", b: "d", c: "a", d: "c", f: 5 },
