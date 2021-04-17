@@ -297,7 +297,6 @@ describe("prepare", () => {
         orderBy: [columnC, columnD, columnF],
     };
 
-    // console.log(JSON.stringify(prepare(rawData, dataSettings), null, 2));
     it("converts raw data into groups list", () => {
         expect(prepare(rawData, dataSettings)).toEqual(groups);
     });
