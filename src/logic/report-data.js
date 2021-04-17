@@ -1,4 +1,0 @@
-
-function sorted(rawData, dataSettings) {
-    
-}
