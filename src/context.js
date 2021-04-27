@@ -1,7 +1,9 @@
 import Icons from "uikit/dist/js/uikit-icons";
 import UIkit from "uikit";
 import { v4 as uuidv4 } from "uuid";
+import Inputmask from "inputmask";
 import Dom from "./components/dom/dom.js";
+import Mask from "./components/report/mask.js";
 import Reporter from "./components/report/reporter.js";
 import ReportsIndex from "./components/report/reports-index.js";
 import ReportParams from "./components/report/report-params.js";
@@ -26,6 +28,8 @@ const context = {
     },
 
     UIkit,
+    Inputmask,
+    Mask,
     Dom,
     ReportsIndex,
     ReportParams,

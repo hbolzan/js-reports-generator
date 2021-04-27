@@ -1,5 +1,4 @@
 import { Column, Grouping, Aggregator } from "../../src/models/report-definition.js";
-import { rawData, groups } from "./aux/data-handling.js";
 import {
     groupValues,
     withGroupValues,
