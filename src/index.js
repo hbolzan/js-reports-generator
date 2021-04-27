@@ -24,6 +24,22 @@ const data = {
     ],
 };
 
-context.Reporter(context, template)
-    .report(data)
-    .render("report-body");
+
+function renderIndex() {
+    context.ReportsIndex(context)
+        .index()
+        .then(dom => dom.render("index-body"));
+}
+
+function pageInit() {
+    const { UIkit, document } = context;
+    UIkit.sticky(document.getElementById("page-header"));
+    renderIndex();
+}
+
+pageInit();
+
+
+// context.Reporter(context, template)
+//     .report(data)
+//     .render("report-body");

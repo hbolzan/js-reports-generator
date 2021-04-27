@@ -14,5 +14,6 @@ function boolParse(x) {
 const identity = x => x;
 const constantly = x => () => x;
 const pipe = (value, functions) => functions.reduce((v, f) => f(v), value);
+const capitalizeFirstLetter = string => string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 
-export { trace, boolParse, identity, constantly, pipe };
+export { trace, boolParse, identity, constantly, pipe, capitalizeFirstLetter };
