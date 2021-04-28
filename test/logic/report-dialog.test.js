@@ -101,14 +101,19 @@ describe("Dialog params input", () => {
             type: "ptCheckBox",
             name: { "from": "status_b" },
             caption: "Aprovados",
-            suggestion: { from: "S" },
             checkBoxOptions: {valueChecked: "S", valueUnchecked: "N", checked: false },
         };
         const checkBox = dlgInput({ uuidGen: constantly("123") }, checkBoxParams, "from");
         expect(checkBox).toStrictEqual(
             ["div", { class: ["uk-form-controls"] },
              ["label",
-              ["input", { class: ["uk-checkbox"], type: "checkbox", name: "status_b", value: "S" }],
+              ["input", {
+                  class: ["uk-checkbox"],
+                  type: "checkbox",
+                  name: "status_b",
+                  dataValueChecked: "S",
+                  dataValueUnchecked: "N",
+              }],
               "Aprovados"]]
         );
     });

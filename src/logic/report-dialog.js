@@ -48,6 +48,19 @@ function radioGroup(context, param, origin) {
             ...radioItems(param)];
 }
 
+function checkBox(context, param, origin) {
+    return ["div", { class: ["uk-form-controls"] },
+            ["label",
+             ["input", {
+                 class: ["uk-checkbox"],
+                 type: "checkbox",
+                 name: param.name.from,
+                 dataValueChecked: param.checkBoxOptions.valueChecked,
+                 dataValueUnchecked: param.checkBoxOptions.valueUnchecked,
+             }],
+             param.caption]];
+}
+
 const inputs = {
     ptText: textInput,
     ptInt: numericInput,
@@ -55,6 +68,7 @@ const inputs = {
     ptFloat: numericInput,
     ptFloatRange: numericInput,
     ptRadioGroup: radioGroup,
+    ptCheckBox: checkBox,
 };
 
 function dlgInput(context, param, origin) {
