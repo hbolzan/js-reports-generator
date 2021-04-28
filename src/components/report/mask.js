@@ -7,13 +7,12 @@ const options = {
 };
 
 
-function Mask({ Inputmask }, type) {
-    const intMask = () => Inputmask("9999999", options),
-          floatMask = () => Inputmask("9999999.99", options);
+const initMask = mask => ({ id }, { document }) => mask.mask(document.getElementById(id));
 
+function Mask({ Inputmask }) {
     return {
-        int: intMask,
-        float: floatMask,
+        int: initMask(Inputmask("9999999")),
+        float: initMask(Inputmask("9999999.99", options)),
     };
 }
 
