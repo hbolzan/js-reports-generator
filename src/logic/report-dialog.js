@@ -1,3 +1,5 @@
+import { constantly } from "./misc.js";
+
 function baseAttrs(id, name) {
     return { id, name, class: ["uk-input"]};
 }
@@ -62,18 +64,17 @@ function checkBox(context, param, origin) {
 }
 
 function dateInput(context, param, origin) {
-    return ["div",
-            ["div", { class: ["uk-inline"]},
-             ["input", {
-                 id,
-                 name: param.name[origin],
-                 class: ["uk-input"],
-                 type: "text",
-                 style: { cursor: "pointer" },
-                 private: { init: context.DatePicker(context).init }
-             }],
-             ["span", { class: ["uk-form-icon", "uk-form-icon-flip"], ukIcon: "calendar" }],
-            ]];
+    return ["div", { class: ["uk-inline"]},
+            ["input", {
+                id: context.uuidGen(),
+                name: param.name[origin],
+                class: ["uk-input"],
+                type: "text",
+                style: { cursor: "pointer" },
+                private: { init: context.DatePicker(context).init }
+            }],
+            ["span", { class: ["uk-form-icon", "uk-form-icon-flip"], ukIcon: "calendar" }],
+           ];
 }
 
 const inputs = {
@@ -92,4 +93,25 @@ function dlgInput(context, param, origin) {
     return inputs[param.type](context, param, origin);
 }
 
+function dlgField(context, param) {
+    const idFrom = context.uuidGen();
+    if ( ["ptIntRange", "ptFloatRange", "ptDateRange"].includes(param.type) ) {
+        return ["div", { class: ["uk-margin" ] },
+                ["label", { class: ["uk-form-label"], for: idFrom }, param.caption],
+                ["div", { class: ["uk-form-controls"] },
+                 dlgInput({ ...context, uuidGen: constantly(idFrom) }, param, "from")],
+                ["div", { class: ["uk-form-controls"] },
+                 dlgInput(context, param, "to")]];
+    }
+    return ["div", { class: ["uk-margin" ] },
+            ["label", { class: ["uk-form-label"], for: idFrom }, param.caption],
+            ["div", { class: ["uk-form-controls"] },
+             dlgInput({ ...context, uuidGen: constantly(idFrom) }, param, "from")]];
+}
+
+function reportParamsForm(context, params) {
+    return ["form", { class: ["uk-form-stacked"] }, ...params.map(param => dlgField(context, param))];
+}
+
 export { dlgInput };
+export default reportParamsForm;
