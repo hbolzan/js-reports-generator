@@ -61,6 +61,21 @@ function checkBox(context, param, origin) {
              param.caption]];
 }
 
+function dateInput(context, param, origin) {
+    return ["div",
+            ["div", { class: ["uk-inline"]},
+             ["input", {
+                 id,
+                 name: param.name[origin],
+                 class: ["uk-input"],
+                 type: "text",
+                 style: { cursor: "pointer" },
+                 private: { init: context.DatePicker(context).init }
+             }],
+             ["span", { class: ["uk-form-icon", "uk-form-icon-flip"], ukIcon: "calendar" }],
+            ]];
+}
+
 const inputs = {
     ptText: textInput,
     ptInt: numericInput,
@@ -69,6 +84,8 @@ const inputs = {
     ptFloatRange: numericInput,
     ptRadioGroup: radioGroup,
     ptCheckBox: checkBox,
+    ptDate: dateInput,
+    ptDateRange: dateInput,
 };
 
 function dlgInput(context, param, origin) {

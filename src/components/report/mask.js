@@ -1,11 +1,8 @@
-
-
 const options = {
     radixPoint: ",",
     groupSeparator: ".",
     numericInput: true,
 };
-
 
 const initMask = mask => ({ id }, { document }) => mask.mask(document.getElementById(id));
 
