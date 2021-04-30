@@ -9,6 +9,7 @@ import DatePicker from "./components/report/date-picker.js";
 import Reporter from "./components/report/reporter.js";
 import ReportsIndex from "./components/report/reports-index.js";
 import ReportParams from "./components/report/report-params.js";
+import ReportDialog from "./components/report/report-dialog.js";
 import SimpleTemplate from "./templates/simple.js";
 
 UIkit.use(Icons);
@@ -37,6 +38,7 @@ const context = {
     Dom,
     ReportsIndex,
     ReportParams,
+    ReportDialog,
     Reporter,
 };
 

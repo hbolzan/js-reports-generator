@@ -1,37 +1,46 @@
-let dialogs = {};
+import { trace } from "../../logic/misc.js";
+import reportParamsForm from "../../logic/report-dialog.js";
 
+let dialogs = {},
+    doms = {},
+    rendered;
 
-function inputWrapper(input, inputId, param) {
-    return ["div", { class: ["uk-margin"] },
-            ["label", { class: ["uk-form-label"], for: inputId }, param.caption,
-             ["div", { class: ["uk-form-controls"] },
-              input]]];
+function dialogElement(context, dom, dialogParams) {
+    const el = context.document.createElement("template");
+    el.innerHtml = dom.asHtml;
+    return el.content.firstElementChild;
 }
 
-function textInput({ uuidGen }, param) {
-    const id = uuidGen();
-    return inputWrapper(["input", { id, name: param.name, type: "text", class: ["uk-input"] }], id, param);
-}
-
-function fieldFrom(context, param) {
-}
-
-function form(context, params) {
-    const fields = params.map(p => field(context, p));
-    return ["form", { class: ["uk-form-horizontal"] }, ...fields];
-}
-
-function Dialog(context, reportId) {
-    return {
-        
-    };
-}
-
-function ReportDialog(context, reportId) {
-    if ( ! dialogs[reportId] ) {
-        dialogs[reportId] = Dialog(reportId);
+function removeRendered(dialogNode) {
+    if ( rendered ) {
+        dialogNode.removeChild(rendered);
     }
-    return dialogs[reportId];
+}
+
+function ReportDialog(context, reportParams) {
+    const { id } = reportParams,
+          dialogNode = document.getElementById("dialog-body"),
+          dialogParams = reportParams.dialogParams;
+
+    if ( ! doms[id] ) {
+        doms[id] = context.Dom(context, reportParamsForm(context, dialogParams));
+    }
+
+    function show() {
+        removeRendered(dialogNode);
+        if ( ! dialogs[id] ) {
+            rendered = doms[id].appendToDomNode(dialogNode);
+            dialogs[id] = rendered;
+        } else {
+            rendered = dialogs[id];
+            dialogNode.appendChild(rendered);
+        }
+        return rendered;
+    }
+
+    return {
+        show,
+    };
 }
 
 export default ReportDialog;

@@ -113,5 +113,5 @@ function reportParamsForm(context, params) {
     return ["form", { class: ["uk-form-stacked"] }, ...params.map(param => dlgField(context, param))];
 }
 
-export { dlgInput };
 export default reportParamsForm;
+export { dlgInput };

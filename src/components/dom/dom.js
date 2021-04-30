@@ -65,8 +65,15 @@ function Dom(context, hiccup, css = "") {
         appendToDomNode(document.getElementById(selectorId));
     }
 
-    function render(parentNodeId) {
-        renderIntoDomNode(document.getElementById(parentNodeId));
+    function parentElement(parent) {
+        if ( typeof(parent) === "string" ) {
+            return document.getElementById(parent);
+        }
+        return parent;
+    }
+
+    function render(parent) {
+        renderIntoDomNode(parentElement(parent));
     }
 
     function findFirst(attrName, value) {

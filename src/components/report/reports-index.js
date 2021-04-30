@@ -5,7 +5,9 @@ function initAccordion({ id }, { UIkit, document, global }) {
 }
 
 function itemClick(context, reportId) {
-    context.ReportParams(context, reportId).get().then(console.log);
+    context.ReportParams(context, reportId)
+        .get()
+        .then(p => context.ReportDialog(context, p).show());
 }
 
 function groupContent(context, reports) {
