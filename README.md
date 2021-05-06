@@ -9,7 +9,7 @@ Create templates, then just add data and some arguments. It will do the rest.
 ### ReportsIndex
 Path: `components/report/reports-index.js`
 
-Fetches list of available reports and create an index with links to report params.
+Fetches list of available reports and creates an index with links to report params.
 
 ### ReportParams
 Path: `components/report/report-params.js`
