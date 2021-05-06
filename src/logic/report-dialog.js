@@ -37,7 +37,7 @@ function radioAttrs(param, index) {
 }
 
 function radioItem(param, caption, index) {
-    return ["label",
+    return ["label", { class: ["uk-text-bold"]}
             ["input", radioAttrs(param, index)], caption];
 }
 
@@ -50,17 +50,24 @@ function radioGroup(context, param, origin) {
             ...radioItems(param)];
 }
 
+function checkBoxOptions(param) {
+    return Object.assign(
+        {
+            class: ["uk-checkbox"],
+            type: "checkbox",
+            name: param.name.from,
+            dataValueChecked: param.checkBoxOptions.valueChecked,
+            dataValueUnchecked: param.checkBoxOptions.valueUnchecked,
+        },
+        ( param.checkBoxOptions.checked ? { checked: true } : {} )
+    );
+}
+
 function checkBox(context, param, origin) {
     return ["div", { class: ["uk-form-controls"] },
             ["label",
-             ["input", {
-                 class: ["uk-checkbox"],
-                 type: "checkbox",
-                 name: param.name.from,
-                 dataValueChecked: param.checkBoxOptions.valueChecked,
-                 dataValueUnchecked: param.checkBoxOptions.valueUnchecked,
-             }],
-             param.caption]];
+             ["input", checkBoxOptions(param)],
+             ["span", { class: ["uk-text-bold", "uk-margin-left"] }, param.caption]]];
 }
 
 function dateInput(context, param, origin) {
@@ -93,24 +100,44 @@ function dlgInput(context, param, origin) {
     return inputs[param.type](context, param, origin);
 }
 
-function dlgField(context, param) {
-    const idFrom = context.uuidGen();
-    if ( ["ptIntRange", "ptFloatRange", "ptDateRange"].includes(param.type) ) {
-        return ["div", { class: ["uk-margin" ] },
-                ["label", { class: ["uk-form-label"], for: idFrom }, param.caption],
-                ["div", { class: ["uk-form-controls"] },
-                 dlgInput({ ...context, uuidGen: constantly(idFrom) }, param, "from")],
-                ["div", { class: ["uk-form-controls"] },
-                 dlgInput(context, param, "to")]];
-    }
+function dlgRangeField(context, param, inputId) {
     return ["div", { class: ["uk-margin" ] },
-            ["label", { class: ["uk-form-label"], for: idFrom }, param.caption],
+            ["label", { class: ["uk-text-bold", "uk-form-label"], for: inputId }, param.caption],
             ["div", { class: ["uk-form-controls"] },
-             dlgInput({ ...context, uuidGen: constantly(idFrom) }, param, "from")]];
+             dlgInput({ ...context, uuidGen: constantly(inputId) }, param, "from")],
+            ["div", { class: ["uk-form-controls"] },
+             dlgInput(context, param, "to")]];
 }
 
-function reportParamsForm(context, params) {
-    return ["form", { class: ["uk-form-stacked"] }, ...params.map(param => dlgField(context, param))];
+function showLabel(param) {
+    return param.type !== "ptCheckBox";
+}
+
+function dlgSingleField(context, param, inputId) {
+    return ["div", { class: ["uk-margin"] },
+            (showLabel(param) ? ["label", { class: ["uk-text-bold", "uk-form-label"], for: inputId }, param.caption] : ["span"]),
+            ["div", { class: ["uk-form-controls"] },
+             dlgInput({ ...context, uuidGen: constantly(inputId) }, param, "from")]];
+}
+
+function dlgField(context, param) {
+    const inputId = context.uuidGen();
+    if ( ["ptIntRange", "ptFloatRange", "ptDateRange"].includes(param.type) ) {
+        return dlgRangeField(context, param, inputId);
+    }
+    return dlgSingleField(context, param, inputId);
+}
+
+function reportParamsForm(context, reportParams) {
+    const params = reportParams.dialogParams;
+
+    return ["div", { class: ["uk-card", "uk-card-default", "uk-card-hover", "uk-card-body", "uk-width-2-3"]},
+            ["h3", { class: ["uk-card-title"] }, reportParams.title],
+            ["form", { class: ["uk-form-stacked"] },
+             ...params.map(param => dlgField(context, param))],
+            ["a", { href: "", class: ["uk-button", "uk-button-primary", "uk-button-large", "uk-margin-large-top", "uk-align-right"] },
+             ["span", { ukIcon: "print"}],
+             ["span", { class: ["uk-margin-small-left"] }, "EMITIR"]]];
 }
 
 export default reportParamsForm;

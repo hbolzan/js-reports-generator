@@ -19,11 +19,10 @@ function removeRendered(dialogNode) {
 
 function ReportDialog(context, reportParams) {
     const { id } = reportParams,
-          dialogNode = document.getElementById("dialog-body"),
-          dialogParams = reportParams.dialogParams;
+          dialogNode = document.getElementById("dialog-body");
 
     if ( ! doms[id] ) {
-        doms[id] = context.Dom(context, reportParamsForm(context, dialogParams));
+        doms[id] = context.Dom(context, reportParamsForm(context, reportParams));
     }
 
     function show() {
