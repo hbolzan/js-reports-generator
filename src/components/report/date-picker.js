@@ -18,7 +18,7 @@ const abbreviatedWeekDays = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
       ];
 
 const datePickerFormatter = (input, date, instance) => {
-    input.value = date.toLocaleDateString(locale);
+    input.value = date.toLocaleDateString("pt-BR");
 };
 
 const datePickerOptions = {

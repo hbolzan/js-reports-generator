@@ -37,8 +37,9 @@ function radioAttrs(param, index) {
 }
 
 function radioItem(param, caption, index) {
-    return ["label", { class: ["uk-text-bold"]}
-            ["input", radioAttrs(param, index)], caption];
+    return ["label", { class: ["uk-text-light"] },
+            ["input", radioAttrs(param, index)],
+            ["span", { class: ["uk-margin-small-left", "uk-margin-right"] }, caption]];
 }
 
 function radioItems(param) {
@@ -103,10 +104,11 @@ function dlgInput(context, param, origin) {
 function dlgRangeField(context, param, inputId) {
     return ["div", { class: ["uk-margin" ] },
             ["label", { class: ["uk-text-bold", "uk-form-label"], for: inputId }, param.caption],
-            ["div", { class: ["uk-form-controls"] },
-             dlgInput({ ...context, uuidGen: constantly(inputId) }, param, "from")],
-            ["div", { class: ["uk-form-controls"] },
-             dlgInput(context, param, "to")]];
+            ["div",
+             ["div", { class: ["uk-inline", "uk-margin-right"] },
+              dlgInput({ ...context, uuidGen: constantly(inputId) }, param, "from")],
+             ["div", { class: ["uk-inline"] },
+              dlgInput(context, param, "to")]]];
 }
 
 function showLabel(param) {
@@ -137,7 +139,7 @@ function reportParamsForm(context, reportParams) {
              ...params.map(param => dlgField(context, param))],
             ["a", { href: "", class: ["uk-button", "uk-button-primary", "uk-button-large", "uk-margin-large-top", "uk-align-right"] },
              ["span", { ukIcon: "print"}],
-             ["span", { class: ["uk-margin-small-left"] }, "EMITIR"]]];
+             ["span", { class: ["uk-margin-small-left"] }, "GERAR RELATÓRIO"]]];
 }
 
 export default reportParamsForm;
