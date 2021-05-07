@@ -1,4 +1,5 @@
 import "uikit/dist/css/uikit.min.css";
+import "js-datepicker/dist/datepicker.min.css";
 import context from "./context.js";
 
 import { defaultPageStyle } from "./components/report/consts.js";

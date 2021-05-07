@@ -28,6 +28,8 @@
         "webpack-dev-server": "^3.11.2"
     },
     "dependencies": {
+        "inputmask": "^5.0.5",
+        "js-datepicker": "^5.18.0",
         "lodash": "^4.17.21",
         "schm": "^0.4.1",
         "uikit": "^3.6.18",
