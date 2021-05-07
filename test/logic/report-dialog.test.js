@@ -85,12 +85,15 @@ describe("Report params dialog input", () => {
         const radioGroup = dlgInput({ uuidGen: constantly("123") }, radioParams, "from");
         expect(radioGroup).toStrictEqual(
             ["div", { class: ["uk-form-controls"] },
-             ["label",
-              ["input", { class: ["uk-radio"], type: "radio", name: "filtro", value: "A", checked: true }], "First"],
-             ["label",
-              ["input", { class: ["uk-radio"], type: "radio", name: "filtro", value: "B" }], "Second"],
-             ["label",
-              ["input", { class: ["uk-radio"], type: "radio", name: "filtro", value: "F" }], "Third"]
+             ["label", { class: ["uk-text-light"] },
+              ["input", { class: ["uk-radio"], type: "radio", name: "filtro", value: "A", checked: true }],
+              ["span", { class: ["uk-margin-small-left", "uk-margin-right"] }, "First"]],
+             ["label", { class: ["uk-text-light"] },
+              ["input", { class: ["uk-radio"], type: "radio", name: "filtro", value: "B" }],
+              ["span", { class: ["uk-margin-small-left", "uk-margin-right"] }, "Second"]],
+            ["label", { class: ["uk-text-light"] },
+              ["input", { class: ["uk-radio"], type: "radio", name: "filtro", value: "F" }],
+              ["span", { class: ["uk-margin-small-left", "uk-margin-right"] }, "Third"]]
             ]
         );
     });
@@ -113,7 +116,7 @@ describe("Report params dialog input", () => {
                   dataValueChecked: "S",
                   dataValueUnchecked: "N",
               }],
-              "Aprovados"]]
+              ["span", { class: ["uk-text-bold", "uk-margin-left"] }, "Aprovados"]]]
         );
     });
 
@@ -147,7 +150,7 @@ describe("Report params dialog input", () => {
 describe("Report params dialog form", () => {
     const init = x => x,
           DatePicker = () => ({ init }),
-          dlgParams = [
+          dialogParams = [
               {
                   "type": "ptDateRange",
                   "name": { "from": "d_ini", "to": "d_fim" },
@@ -160,41 +163,44 @@ describe("Report params dialog form", () => {
                   "caption": "Código do vendedor (zero para todos)",
                   "suggestion": { "from": "0", "to": "" },
               },
-          ];
+          ],
+          reportParams = { title: "Test Report", dialogParams };
 
-    const expected = ["form", { class: ["uk-form-stacked"] },
-                      ["div", { class: ["uk-margin" ] },
-                       ["label", { class: ["uk-form-label"], for: "xyz-from" }, "Pedidos no período de"],
-                       ["div", { class: ["uk-form-controls"] },
-                        ["div", { class: ["uk-inline"]},
-                         ["input", {
-                             id: "xyz-from",
-                             name: "d_ini",
-                             class: ["uk-input"],
-                             type: "text",
-                             style: { cursor: "pointer" },
-                             private: { init }
-                         }],
-                         ["span", { class: ["uk-form-icon", "uk-form-icon-flip"], ukIcon: "calendar" }],
-                        ]],
-                       ["div", { class: ["uk-form-controls"] },
-                        ["div", { class: ["uk-inline"]},
-                         ["input", {
-                             id: "xyz-to",
-                             name: "d_fim",
-                             class: ["uk-input"],
-                             type: "text",
-                             style: { cursor: "pointer" },
-                             private: { init }
-                         }],
-                         ["span", { class: ["uk-form-icon", "uk-form-icon-flip"], ukIcon: "calendar" }],
-                        ]]],
-
-                      ["div", { class: ["uk-margin" ] },
-                       ["label", { class: ["uk-form-label"], for: "abc" },
-                        "Código do vendedor (zero para todos)"],
-                       ["div", { class: ["uk-form-controls"] },
-                        ["input", { id: "abc", name: "vnd_cod", class: ["uk-input"], private: { init: intMask } }]]]];
+    const expected = ["div", {"class": ["uk-card", "uk-card-default", "uk-card-hover", "uk-card-body", "uk-width-2-3"]},
+ ["h3", {"class": ["uk-card-title"]}, "Test Report"],
+ ["form", {"class": ["uk-form-stacked"]},
+  ["div", {"class": ["uk-margin"]},
+   ["label", {"class": ["uk-text-bold", "uk-form-label"], "for": "xyz-from"}, "Pedidos no período de"],
+   ["div",
+    ["div", {"class": ["uk-inline", "uk-margin-right"]},
+     ["div", {"class": ["uk-inline"]},
+      ["input", {
+          "id": "xyz-from",
+          "name": "d_ini",
+          "class": ["uk-input"],
+          "type": "text",
+          "style": {"cursor": "pointer"},
+          "private": { init }
+      }],
+      ["span", {"class": ["uk-form-icon", "uk-form-icon-flip"], "ukIcon": "calendar"}]]],
+    ["div", {"class": ["uk-inline"]},
+     ["div", {"class": ["uk-inline"]},
+      ["input", {
+          "id": "xyz-to",
+          "name": "d_fim",
+          "class": ["uk-input"],
+          "type": "text",
+          "style": {"cursor": "pointer"},
+          "private": { init }
+      }],
+      ["span", {"class": ["uk-form-icon", "uk-form-icon-flip"], "ukIcon": "calendar"}]]]]],
+  ["div", {"class": ["uk-margin"]},
+   ["label", {"class": ["uk-text-bold", "uk-form-label"], "for": "abc"}, "Código do vendedor (zero para todos)"],
+   ["div", {"class": ["uk-form-controls"]},
+    ["input", {"id": "abc", "name": "vnd_cod", "class": ["uk-input"], "private": { init: intMask }}]]]],
+ ["a", {"href": "", "class": ["uk-button", "uk-button-primary", "uk-button-large", "uk-margin-large-top", "uk-align-right"]},
+  ["span", {"ukIcon": "print"}],
+  ["span", {"class": ["uk-margin-small-left"]}, "GERAR RELATÓRIO"]]];
 
     const mockUuidGen = (ids) => () => {
         const result = ids.slice(0, 1)[0];
@@ -202,9 +208,9 @@ describe("Report params dialog form", () => {
         return result;
     };
     const uuidGen = mockUuidGen(["xyz-from", "xyz-to", "abc"]);
-
+    // console.log(JSON.stringify(reportParamsForm({ uuidGen, DatePicker, Mask }, reportParams), null, 2));
     it("returns a form with params inputs", () => {
-        expect(reportParamsForm({ uuidGen, DatePicker, Mask }, dlgParams))
+        expect(reportParamsForm({ uuidGen, DatePicker, Mask }, reportParams))
             .toStrictEqual(expected);
     });
 });

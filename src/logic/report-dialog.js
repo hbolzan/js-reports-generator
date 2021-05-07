@@ -102,7 +102,7 @@ function dlgInput(context, param, origin) {
 }
 
 function dlgRangeField(context, param, inputId) {
-    return ["div", { class: ["uk-margin" ] },
+    return ["div", { class: ["uk-margin"] },
             ["label", { class: ["uk-text-bold", "uk-form-label"], for: inputId }, param.caption],
             ["div",
              ["div", { class: ["uk-inline", "uk-margin-right"] },
