@@ -27,15 +27,13 @@ function ReportDialog(context, reportParams) {
           reporter = context.Reporter(context, null, reportParams);
 
     function buttonClick() {
-        reporter.fetch(queryString(id))
-            .then(context.Papa.parse)
-            .then(console.log);
+        reporter.report(queryString(id));
     }
 
     if ( ! doms[id] ) {
         doms[id] = context.Dom(
             context,
-            reportParamsForm(context, reportParams, () => buttonClick(reportParams))
+            reportParamsForm(context, reportParams, buttonClick)
         );
     }
 

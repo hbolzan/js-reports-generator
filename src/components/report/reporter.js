@@ -1,11 +1,9 @@
+import { parsedToData } from "../../logic/reporter.js";
+
 function Reporter(context, template, reportDefinition) {
-    const { api, global } = context,
+    const { api, global, Dom, Papa } = context,
           reportId = reportDefinition.id;
     const dataUrl = `${ api.protocol }://${ api.host }${ api.baseUrl }/reports/${ reportId }/data`;
-
-    function report(data) {
-        return context.Dom(context, template.render(data), template.style);
-    }
 
     function fetch(queryString) {
         return global.fetch(
@@ -14,8 +12,18 @@ function Reporter(context, template, reportDefinition) {
         ).then(r => r.text());
     }
 
+    function render(data) {
+        return Dom(context, template.render(data), template.style);
+    }
+
+    function report(queryString) {
+        fetch(queryString)
+            .then(Papa.parse)
+            .then(parsedToData)
+            .then(console.log);
+    }
+
     return {
-        fetch,
         report,
     };
 }
