@@ -21,16 +21,22 @@ function removeRendered(dialogNode) {
 const inputsById = id => Array.prototype.slice.call(dialogs[id].querySelectorAll("input"));
 const queryString = id => pipe(id, [inputsById, collectArguments, argumentsToQueryString]);
 
-function buttonClick(id) {
-    console.log(queryString(id));
-}
-
 function ReportDialog(context, reportParams) {
     const { id } = reportParams,
-          dialogNode = document.getElementById("dialog-body");
+          dialogNode = document.getElementById("dialog-body"),
+          reporter = context.Reporter(context, null, reportParams);
+
+    function buttonClick() {
+        reporter.fetch(queryString(id))
+            .then(context.Papa.parse)
+            .then(console.log);
+    }
 
     if ( ! doms[id] ) {
-        doms[id] = context.Dom(context, reportParamsForm(context, reportParams, () => buttonClick(id)));
+        doms[id] = context.Dom(
+            context,
+            reportParamsForm(context, reportParams, () => buttonClick(reportParams))
+        );
     }
 
     function show() {

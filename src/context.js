@@ -3,6 +3,7 @@ import UIkit from "uikit";
 import { v4 as uuidv4 } from "uuid";
 import datepicker from "js-datepicker";
 import Inputmask from "inputmask";
+import Papa from "papaparse";
 import Dom from "./components/dom/dom.js";
 import Mask from "./components/report/mask.js";
 import DatePicker from "./components/report/date-picker.js";
@@ -33,6 +34,7 @@ const context = {
     UIkit,
     datepicker,
     Inputmask,
+    Papa,
     Mask,
     DatePicker,
     Dom,
