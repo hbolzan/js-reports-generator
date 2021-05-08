@@ -130,17 +130,51 @@ function dlgField(context, param) {
     return dlgSingleField(context, param, inputId);
 }
 
-function reportParamsForm(context, reportParams) {
+function reportParamsForm(context, reportParams, buttonClick) {
     const params = reportParams.dialogParams;
 
     return ["div", { class: ["uk-card", "uk-card-default", "uk-card-hover", "uk-card-body", "uk-width-2-3"]},
             ["h3", { class: ["uk-card-title"] }, reportParams.title],
             ["form", { class: ["uk-form-stacked"] },
              ...params.map(param => dlgField(context, param))],
-            ["a", { href: "", class: ["uk-button", "uk-button-primary", "uk-button-large", "uk-margin-large-top", "uk-align-right"] },
+            ["div", {
+                href: "",
+                onclick: buttonClick,
+                class: ["uk-button", "uk-button-primary", "uk-button-large", "uk-margin-large-top", "uk-align-right"]
+            },
              ["span", { ukIcon: "print"}],
              ["span", { class: ["uk-margin-small-left"] }, "GERAR RELATÓRIO"]]];
 }
 
+function checkBoxValue(checkBox) {
+    return  checkBox.checked ? checkBox.dataset.valueChecked : checkBox.dataset.valueUnchecked;
+}
+
+function radioItemValue(radioItem) {
+    return radioItem.checked ? radioItem.value : undefined;
+}
+
+function inputValue(input) {
+    if ( input.type === "checkbox" ) {
+        return checkBoxValue(input);
+    }
+    if ( input.type === "radio" ) {
+        return radioItemValue(input);
+    }
+    return input.value;
+}
+
+function collectReducer(collected, input) {
+    const value = inputValue(input);
+    if ( value === undefined ) {
+        return collected;
+    }
+    return { ...collected, [input.name]: value };
+}
+
+function collectArguments(inputs) {
+    return inputs.reduce(collectReducer, {});
+}
+
 export default reportParamsForm;
-export { dlgInput };
+export { dlgInput, collectArguments };
