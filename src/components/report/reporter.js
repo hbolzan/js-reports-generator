@@ -17,6 +17,7 @@ function Reporter(context, template, reportDefinition) {
     }
 
     function report(queryString) {
+        console.log(reportDefinition);
         fetch(queryString)
             .then(Papa.parse)
             .then(parsedToData)
