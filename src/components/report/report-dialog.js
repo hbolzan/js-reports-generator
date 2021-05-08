@@ -1,6 +1,6 @@
-import { trace } from "../../logic/misc.js";
+import { pipe } from "../../logic/misc.js";
 import reportParamsForm from "../../logic/report-dialog.js";
-import { collectArguments } from "../../logic/report-dialog.js";
+import { collectArguments, argumentsToQueryString } from "../../logic/report-dialog.js";
 
 let dialogs = {},
     doms = {},
@@ -18,8 +18,11 @@ function removeRendered(dialogNode) {
     }
 }
 
+const inputsById = id => Array.prototype.slice.call(dialogs[id].querySelectorAll("input"));
+const queryString = id => pipe(id, [inputsById, collectArguments, argumentsToQueryString]);
+
 function buttonClick(id) {
-    console.log(collectArguments(Array.prototype.slice.call(dialogs[id].querySelectorAll("input"))));
+    console.log(queryString(id));
 }
 
 function ReportDialog(context, reportParams) {

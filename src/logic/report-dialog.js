@@ -78,6 +78,7 @@ function dateInput(context, param, origin) {
                 name: param.name[origin],
                 class: ["uk-input"],
                 type: "text",
+                dataSubType: "date",
                 style: { cursor: "pointer" },
                 private: { init: context.DatePicker(context).init }
             }],
@@ -146,35 +147,39 @@ function reportParamsForm(context, reportParams, buttonClick) {
              ["span", { class: ["uk-margin-small-left"] }, "GERAR RELATÓRIO"]]];
 }
 
-function checkBoxValue(checkBox) {
-    return  checkBox.checked ? checkBox.dataset.valueChecked : checkBox.dataset.valueUnchecked;
+function dateValue(dateInput) {
+    const dateParts = dateInput.value.split("/");
+    if ( dateParts.length < 3 ) {
+        return "";
+    }
+    return `${ dateParts[2] }-${ dateParts[1] }-${ dateParts[0] }`;
 }
 
-function radioItemValue(radioItem) {
-    return radioItem.checked ? radioItem.value : undefined;
-}
+const valueFns = {
+    checkbox: i => i.checked ? i.dataset.valueUnchecked : i.dataset.valueUnchecked,
+    radio: i => i.checked ? i.value : undefined,
+    date: dateValue,
+    text: i => i.value,
+};
 
-function inputValue(input) {
-    if ( input.type === "checkbox" ) {
-        return checkBoxValue(input);
-    }
-    if ( input.type === "radio" ) {
-        return radioItemValue(input);
-    }
-    return input.value;
-}
+const inputType = input => input.dataset.subType || input.type,
+      inputValue = input => valueFns[inputType(input)](input);
 
 function collectReducer(collected, input) {
     const value = inputValue(input);
-    if ( value === undefined ) {
+    if ( value === undefined || input.name === "" ) {
         return collected;
     }
-    return { ...collected, [input.name]: value };
+    return [ ...collected, { name: input.name, value } ];
 }
 
 function collectArguments(inputs) {
-    return inputs.reduce(collectReducer, {});
+    return inputs.reduce(collectReducer, []);
+}
+
+function argumentsToQueryString(args) {
+    return args.map(a => `${ a.name }=${ a.value }`).join("&");
 }
 
 export default reportParamsForm;
-export { dlgInput, collectArguments };
+export { dlgInput, collectArguments, argumentsToQueryString };
