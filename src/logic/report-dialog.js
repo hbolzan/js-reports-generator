@@ -156,7 +156,7 @@ function dateValue(dateInput) {
 }
 
 const valueFns = {
-    checkbox: i => i.checked ? i.dataset.valueUnchecked : i.dataset.valueUnchecked,
+    checkbox: i => i.checked ? i.dataset.valueChecked : i.dataset.valueUnchecked,
     radio: i => i.checked ? i.value : undefined,
     date: dateValue,
     text: i => i.value,

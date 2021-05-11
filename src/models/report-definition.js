@@ -27,9 +27,13 @@ const Column = schema({
     value: { type: Function, default: () => function(row, data) { return row[this.name]; } },
     width: Number,
     visible: { type: Boolean, default: true },
-    dataType: { type: Function, enum: [String, Number, Boolean], default: () => String },
-    viewType: { type: String, enum: ["text", "bool", "image"], default: "text", },
-    numberFormat: String,
+    dataType: { type: Function, enum: [String, Number, Boolean, Date], default: () => String },
+    viewType: {
+        type: String,
+        enum: ["char", "integer", "float", "date", "time", "datetime", "bool", "image"],
+        default: "char",
+    },
+    displayFormat: { type: Function, default: () => identity },
     boolParse: { type: Function, default: () => boolParse },
 });
 

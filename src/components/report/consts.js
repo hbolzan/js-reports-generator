@@ -23,7 +23,7 @@ const defaultPageStyle = {
         page: {
             size: "A4",
             orientation: "portrait",
-            margins: {unit: "mm", left: 15, top: 10, right: 15, bottom: 5 }
+            margins: { unit: "mm", left: 15, top: 10, right: 15, bottom: 5 }
         },
 
         html: {
