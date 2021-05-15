@@ -177,9 +177,5 @@ function collectArguments(inputs) {
     return inputs.reduce(collectReducer, []);
 }
 
-function argumentsToQueryString(args) {
-    return args.map(a => `${ a.name }=${ a.value }`).join("&");
-}
-
 export default reportParamsForm;
-export { dlgInput, collectArguments, argumentsToQueryString };
+export { dlgInput, collectArguments };

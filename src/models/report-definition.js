@@ -51,6 +51,7 @@ const Grouping = schema({
 const DataSettings = schema({
     columns: [Column],
     aggregators: [Aggregator],
+    showAggregates: { type: Boolean, default: true },
     grouping: Grouping,
     orderBy: [String],
 });

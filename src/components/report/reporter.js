@@ -1,4 +1,5 @@
-import { parsedToData } from "../../logic/reporter.js";
+import { parsedToData, argumentsToQueryString } from "../../logic/reporter.js";
+import definitionToSettings from "../../adapters/report.js";
 
 function Reporter(context, template, reportDefinition) {
     const { api, global, Dom, Papa } = context,
@@ -16,9 +17,9 @@ function Reporter(context, template, reportDefinition) {
         return Dom(context, template.render(data), template.style);
     }
 
-    function report(queryString) {
-        console.log(reportDefinition);
-        fetch(queryString)
+    function report(reportArguments) {
+        console.log(definitionToSettings(reportDefinition));
+        fetch(argumentsToQueryString(reportArguments))
             .then(Papa.parse)
             .then(parsedToData)
             .then(console.log);

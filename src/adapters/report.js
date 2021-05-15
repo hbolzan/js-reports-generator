@@ -1,6 +1,15 @@
-import { identity } from "../logic/misc.js";
+import { identity, constantly } from "../logic/misc.js";
 import { formatFloat, formatDate } from "../logic/format.js";
-import { Margins, PageStyle, Page, Column, ReportSettings } from "../models/report-definition.js";
+import {
+    Margins,
+    PageStyle,
+    Page,
+    Column,
+    Aggregator,
+    Grouping,
+    DataSettings,
+    ReportSettings,
+} from "../models/report-definition.js";
 import { defaultPageStyle } from "../components/report/consts.js";
 
 function address(endereco, cep, uf, cidade, bairro) {
@@ -63,9 +72,29 @@ function fieldToColumn({ columnName, dataType, displayFormat, label, visible, wi
     });
 }
 
-function dataSettings({ fields, groups, headLines, totals }) {
-    return dataSettings.parse({
-        columns: fields.map(fieldToColumn),
+function toAggregator(aggregator, columns) {
+    return Aggregator.parse({
+        column: columns.filter(c => c.name === aggregator.columnName)[0],
+    });
+}
+
+function toGrouping(grouping, columns) {
+    return Grouping.parse({
+        title: row => grouping.headLines.join("\n"),
+        showAggregates: grouping.aggregatorsVisible,
+        columns: columns.filter(c => grouping.columns.includes(c.name)),
+    });
+}
+
+function dataSettings({ fields, aggregators, aggregatorsVisible, grouping, headLines, totals }) {
+    const columns = fields.map(fieldToColumn);
+
+    return DataSettings.parse({
+        columns,
+        aggregators: aggregators.map(a => toAggregator(a, columns)),
+        showAggregates: aggregatorsVisible,
+        grouping: toGrouping(grouping, columns),
+        orderBy: [],
     });
 }
 
@@ -86,4 +115,4 @@ function definitionToSettings(definition) {
     };
 }
 
-export { definitionToSettings };
+export default definitionToSettings;
