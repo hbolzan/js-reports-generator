@@ -68,7 +68,7 @@ function fieldToColumn({ columnName, dataType, displayFormat, label, visible, wi
         label,
         width,
         visible,
-        numberFormat: toDisplayFormatFn(displayFormat, dataType),
+        displayFormat: toDisplayFormatFn(displayFormat, dataType),
     });
 }
 
@@ -78,9 +78,20 @@ function toAggregator(aggregator, columns) {
     });
 }
 
+const isNotSeparatorLine = line => line.split("").filter(c => c !== "=").length > 0;
+
+function groupTitle(grouping) {
+    const header = grouping.headLines.filter(isNotSeparatorLine).join("\n"),
+          columns = header.match(/\<(.*?)\>/g).map(s => s.replaceAll("<", "").replaceAll(">", ""));
+    return function (group) {
+        const firstRow = group.rows[0];
+        return columns.reduce((s, col) => s.replaceAll(`<${ col }>`, firstRow[col]), header);
+    };
+}
+
 function toGrouping(grouping, columns) {
     return Grouping.parse({
-        title: row => grouping.headLines.join("\n"),
+        title: groupTitle(grouping),
         showAggregates: grouping.aggregatorsVisible,
         columns: columns.filter(c => grouping.columns.includes(c.name)),
     });

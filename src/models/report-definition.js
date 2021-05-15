@@ -21,12 +21,22 @@ const PageStyle = schema({
     css: [String],
 });
 
+const alignLeft = constantly("left");
+const alignRight = constantly("right");
+const alignCenter = constantly("center");
+const alignDefault = column => column.dataType === Number ? "right" : "left";
+
 const Column = schema({
     name: String,
     label: String,
     value: { type: Function, default: () => function(row, data) { return row[this.name]; } },
     width: Number,
     visible: { type: Boolean, default: true },
+    alignment: {
+        type: Function,
+        enum: [alignLeft, alignCenter, alignRight, alignDefault],
+        default: () => () => alignDefault(this),
+    },
     dataType: { type: Function, enum: [String, Number, Boolean, Date], default: () => String },
     viewType: {
         type: String,

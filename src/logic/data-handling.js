@@ -47,6 +47,9 @@ function coerce(value, dataType) {
     if (dataType === Boolean) {
         return boolParse(value);
     }
+    if (dataType === Number && typeof(value) === "string") {
+        return Number(value.replaceAll(",", "."));
+    }
     return dataType(value);
 }
 
