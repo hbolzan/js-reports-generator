@@ -70,6 +70,8 @@ const withAttrs = (assigners, groups) => groups.map(
 );
 
 function prepare(rawData, dataSettings) {
+    console.log(dataSettings);
+
     const groupColumns = dataSettings.grouping.columns.map(c => c.name),
           sortColumns = dataSettings.orderBy.map(c => c.name);
     return pipe(
