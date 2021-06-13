@@ -131,11 +131,11 @@ function dlgField(context, param) {
     return dlgSingleField(context, param, inputId);
 }
 
-function reportParamsForm(context, reportParams, buttonClick) {
-    const params = reportParams.dialogParams;
+function reportParamsForm(context, reportSettings, buttonClick) {
+    const params = reportSettings.dialogParams;
 
     return ["div", { class: ["uk-card", "uk-card-default", "uk-card-hover", "uk-card-body", "uk-width-2-3"]},
-            ["h3", { class: ["uk-card-title"] }, reportParams.title],
+            ["h3", { class: ["uk-card-title"] }, reportSettings.settings.title],
             ["form", { class: ["uk-form-stacked"] },
              ...params.map(param => dlgField(context, param))],
             ["div", {

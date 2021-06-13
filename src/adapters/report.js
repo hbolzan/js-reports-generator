@@ -82,7 +82,7 @@ const isNotSeparatorLine = line => line.split("").filter(c => c !== "=").length 
 
 function groupTitle(grouping) {
     const header = grouping.headLines.filter(isNotSeparatorLine).join("\n"),
-          columns = header.match(/\<(.*?)\>/g).map(s => s.replaceAll("<", "").replaceAll(">", ""));
+          columns = header.match(/\<(.*?)\>/g)?.map(s => s.replaceAll("<", "").replaceAll(">", ""));
     return function (group) {
         const firstRow = group.rows[0];
         return columns.reduce((s, col) => s.replaceAll(`<${ col }>`, firstRow[col]), header);
@@ -110,12 +110,13 @@ function dataSettings({ fields, aggregators, aggregatorsVisible, grouping, headL
 }
 
 function definitionToSettings(definition) {
-    const { id, title, companyInfo } = definition,
+    const { id, title, companyInfo, templateName } = definition,
           { page, html, styles } = defaultPageStyle.mediaPrint;
 
     return {
         name: id,
         title,
+        templateName,
         owner: toOwner(companyInfo),
         page: Page.parse({ margins: Margins.parse({}) }),
         media: {

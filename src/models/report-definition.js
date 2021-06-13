@@ -69,6 +69,7 @@ const DataSettings = schema({
 const ReportSettings = schema({
     name: String,
     title: String,
+    templateName: String,
     owner: {
         name: { type: String, default: "MiniPCP" },
         address: String,

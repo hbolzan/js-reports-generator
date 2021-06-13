@@ -21,10 +21,10 @@ function removeRendered(dialogNode) {
 const inputsById = id => Array.prototype.slice.call(dialogs[id].querySelectorAll("input"));
 const reportArguments = id => pipe(id, [inputsById, collectArguments]);
 
-function ReportDialog(context, reportParams) {
-    const { id } = reportParams,
-          dialogNode = document.getElementById("dialog-body"),
-          reporter = context.Reporter(context, null, reportParams);
+function ReportDialog(context, reportSettings) {
+    const id = reportSettings.settings.name,
+          dialogNode = document.getElementById(context.renderNodes.dialog),
+          reporter = context.Reporter(context, reportSettings);
 
     function buttonClick() {
         reporter.report(reportArguments(id));
@@ -33,7 +33,7 @@ function ReportDialog(context, reportParams) {
     if ( ! doms[id] ) {
         doms[id] = context.Dom(
             context,
-            reportParamsForm(context, reportParams, buttonClick)
+            reportParamsForm(context, reportSettings, buttonClick)
         );
     }
 

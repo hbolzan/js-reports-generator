@@ -27,9 +27,9 @@ function parseStyle(style) {
         .join("\n");
 }
 
-function styleSheet(style) {
-    return `@media screen {\n${ parseStyle(style.mediaScreen) }\n}\n\n` +
-        `@media print {\n${ parseStyle(style.mediaPrint) }\n}`;
+function styleSheet(settings) {
+    return `@media screen {\n${ parseStyle(settings.media.screen) }\n}\n\n` +
+        `@media print {\n${ parseStyle(settings.media.print) }\n}`;
 }
 
 export { emptyTh, columnHeader, columnsHeaderRow, tHead, tFoot, bodyTd, bodyTr, tBody, styleSheet };
