@@ -17,25 +17,16 @@ import MiniPCPTemplate from "./templates/minipcp.js";
 
 UIkit.use(Icons);
 
-const api = {
-    protocol: "http",
-    host: "localhost:9999",
-    baseUrl: "/api/v1",
-};
-
 const baseContext = {
-    global: window,
-    document: window.document,
-    uuidGen: uuidv4,
-    api,
-    reportStyleSheetId: uuidv4(),
-
     renderNodes: {
         dialog: "dialog-body",
         reportsIndex: "index-body",
         pageHeader: "page-header",
         reportContainer: "report-container",
+        reportIFrame: "report-iframe",
+        reportBody: "report-body",
         reportCloseButton: "report-close-button",
+        reportPrintButton: "report-print-button",
     },
 
     templates: {
@@ -43,6 +34,17 @@ const baseContext = {
         MiniPCPTemplate,
         Default: SimpleTemplate,
     },
+
+    api: {
+        protocol: "http",
+        host: "localhost:9999",
+        baseUrl: "/api/v1",
+    },
+
+    global: window,
+    document: window.document,
+    uuidGen: uuidv4,
+    reportStyleSheetId: uuidv4(),
 
     UIkit,
     datepicker,

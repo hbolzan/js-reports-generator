@@ -13,6 +13,7 @@ const borderStyles = [
 const defaultPageStyle = {
     mediaScreen: {
         styles: [
+            "body {margin: 50px 60px}",
             "tr:last-child td {border-right: none;}",
         ]
             .concat(borderStyles)

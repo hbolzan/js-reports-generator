@@ -2,7 +2,7 @@ import { marginsToCSS, pageToCSS, objectToCSS } from "../logic/report.js";
 
 const emptyTh = (data, thClass) => ["th", ({ class: [thClass], colspan: String(data.columns.length) })];
 
-const columnHeader = (tr, column) => tr.concat([["th", column.label || column.name]]);
+const columnHeader = (tr, column) => column.visible ? tr.concat([["th", column.label || column.name]]) : tr;
 const columnsHeaderRow = data => data.columns.reduce(columnHeader, ["tr"]);
 const tHead = (data, emptyClass) => ["thead", ["tr", emptyTh(data, emptyClass)], columnsHeaderRow(data)];
 const tFoot = (data, emptyClass) => ["tfoot", ["tr", emptyTh(data, emptyClass)]];
@@ -15,16 +15,17 @@ function parseCSSElement(elKey, el) {
     if (elKey == "page") {
         return [pageToCSS(el)];
     }
-    if (elKey == "styles") {
+    if (elKey == "css") {
         return el;
     }
     return [objectToCSS(elKey, el)];
 }
 
-function parseStyle(style) {
-    return _.keys(style)
-        .reduce((s, k) => s.concat(parseCSSElement(k, style[k])), [])
-        .join("\n");
+function parseStyle(media) {
+    return _.keys(media.styles)
+        .reduce((s, k) => s.concat(parseCSSElement(k, media.styles[k])), [])
+        .join("\n") + "\n" +
+        media.css.join("\n");
 }
 
 function styleSheet(settings) {

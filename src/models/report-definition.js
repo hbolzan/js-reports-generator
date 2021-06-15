@@ -17,7 +17,7 @@ const Page = schema({
 });
 
 const PageStyle = schema({
-    styles: [Object],
+    styles: Object,
     css: [String],
 });
 

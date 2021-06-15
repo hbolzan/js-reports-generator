@@ -18,9 +18,19 @@ function Page(baseContext) {
         document.getElementById(renderNodes.reportContainer).hidden = ! state;
     }
 
+    function iFrameWindow() {
+        const iframe = document.getElementById(renderNodes.reportIFrame);
+        return (iframe.contentWindow || iframe.contentDocument.document || iframe.contentDocument);
+    }
+
     function iFrameDocument() {
-        const container = document.getElementById(renderNodes.reportContainer);
-        return container.contentWindow || container.contentDocument.document || container.contentDocument;
+        return iFrameWindow().document;
+    }
+
+    function printReport() {
+        const frameWindow = iFrameWindow();
+        frameWindow.focus();
+        frameWindow.print();
     }
 
     function init() {
@@ -31,6 +41,7 @@ function Page(baseContext) {
         self.hideReport();
         document.getElementById(renderNodes.reportContainer).style = "";
         document.getElementById(renderNodes.reportCloseButton).onclick = self.hideReport;
+        document.getElementById(renderNodes.reportPrintButton).onclick = printReport;
         renderIndex();
     }
 

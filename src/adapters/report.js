@@ -120,8 +120,8 @@ function definitionToSettings(definition) {
         owner: toOwner(companyInfo),
         page: Page.parse({ margins: Margins.parse({}) }),
         media: {
-            screen: pageStyle([], defaultPageStyle.mediaScreen.styles),
-            print: pageStyle([page, html], styles),
+            screen: pageStyle({}, defaultPageStyle.mediaScreen.styles),
+            print: pageStyle({page, html}, styles),
         },
         data: dataSettings(definition),
     };
