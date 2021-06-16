@@ -78,6 +78,7 @@ function dateInput(context, param, origin) {
                 name: param.name[origin],
                 class: ["uk-input"],
                 type: "text",
+                dataSubType: "date",
                 style: { cursor: "pointer" },
                 private: { init: context.DatePicker(context).init }
             }],
@@ -130,17 +131,51 @@ function dlgField(context, param) {
     return dlgSingleField(context, param, inputId);
 }
 
-function reportParamsForm(context, reportParams) {
-    const params = reportParams.dialogParams;
+function reportParamsForm(context, reportSettings, buttonClick) {
+    const params = reportSettings.dialogParams;
 
     return ["div", { class: ["uk-card", "uk-card-default", "uk-card-hover", "uk-card-body", "uk-width-2-3"]},
-            ["h3", { class: ["uk-card-title"] }, reportParams.title],
+            ["h3", { class: ["uk-card-title"] }, reportSettings.settings.title],
             ["form", { class: ["uk-form-stacked"] },
              ...params.map(param => dlgField(context, param))],
-            ["a", { href: "", class: ["uk-button", "uk-button-primary", "uk-button-large", "uk-margin-large-top", "uk-align-right"] },
+            ["div", {
+                href: "",
+                onclick: buttonClick,
+                class: ["uk-button", "uk-button-primary", "uk-button-large", "uk-margin-large-top", "uk-align-right"]
+            },
              ["span", { ukIcon: "print"}],
              ["span", { class: ["uk-margin-small-left"] }, "GERAR RELATÓRIO"]]];
 }
 
+function dateValue(dateInput) {
+    const dateParts = dateInput.value.split("/");
+    if ( dateParts.length < 3 ) {
+        return "";
+    }
+    return `${ dateParts[2] }-${ dateParts[1] }-${ dateParts[0] }`;
+}
+
+const valueFns = {
+    checkbox: i => i.checked ? i.dataset.valueChecked : i.dataset.valueUnchecked,
+    radio: i => i.checked ? i.value : undefined,
+    date: dateValue,
+    text: i => i.value,
+};
+
+const inputType = input => input.dataset.subType || input.type,
+      inputValue = input => valueFns[inputType(input)](input);
+
+function collectReducer(collected, input) {
+    const value = inputValue(input);
+    if ( value === undefined || input.name === "" ) {
+        return collected;
+    }
+    return [ ...collected, { name: input.name, value } ];
+}
+
+function collectArguments(inputs) {
+    return inputs.reduce(collectReducer, []);
+}
+
 export default reportParamsForm;
-export { dlgInput };
+export { dlgInput, collectArguments };

@@ -13,6 +13,7 @@ const borderStyles = [
 const defaultPageStyle = {
     mediaScreen: {
         styles: [
+            "body {margin: 50px 60px}",
             "tr:last-child td {border-right: none;}",
         ]
             .concat(borderStyles)
@@ -23,7 +24,7 @@ const defaultPageStyle = {
         page: {
             size: "A4",
             orientation: "portrait",
-            margins: {unit: "mm", left: 15, top: 10, right: 15, bottom: 5 }
+            margins: { unit: "mm", left: 15, top: 10, right: 15, bottom: 5 }
         },
 
         html: {

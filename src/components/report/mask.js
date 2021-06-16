@@ -4,14 +4,14 @@ const options = {
     numericInput: true,
 };
 
-const initMask = mask => ({ id }, { document }) => {
-    return mask.mask(document.getElementById(id));
-}
+const initMask = ({ id }, { Inputmask, document }, alias) => {
+    return Inputmask(alias, options).mask(document.getElementById(id));
+};
 
 function Mask({ Inputmask }) {
     return {
-        int: initMask(Inputmask("9999999", options)),
-        float: initMask(Inputmask("9999999.99", options)),
+        int: (node, context) => initMask(node, context, "integer"),
+        float: (node, context) => initMask(node, context, "numeric"),
     };
 }
 

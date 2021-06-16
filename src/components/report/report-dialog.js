@@ -1,5 +1,6 @@
-import { trace } from "../../logic/misc.js";
+import { pipe } from "../../logic/misc.js";
 import reportParamsForm from "../../logic/report-dialog.js";
+import { collectArguments } from "../../logic/report-dialog.js";
 
 let dialogs = {},
     doms = {},
@@ -17,12 +18,23 @@ function removeRendered(dialogNode) {
     }
 }
 
-function ReportDialog(context, reportParams) {
-    const { id } = reportParams,
-          dialogNode = document.getElementById("dialog-body");
+const inputsById = id => Array.prototype.slice.call(dialogs[id].querySelectorAll("input"));
+const reportArguments = id => pipe(id, [inputsById, collectArguments]);
+
+function ReportDialog(context, reportSettings) {
+    const id = reportSettings.settings.name,
+          dialogNode = document.getElementById(context.renderNodes.dialog),
+          reporter = context.Reporter(context, reportSettings);
+
+    function buttonClick() {
+        reporter.report(reportArguments(id));
+    }
 
     if ( ! doms[id] ) {
-        doms[id] = context.Dom(context, reportParamsForm(context, reportParams));
+        doms[id] = context.Dom(
+            context,
+            reportParamsForm(context, reportSettings, buttonClick)
+        );
     }
 
     function show() {

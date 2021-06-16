@@ -17,9 +17,14 @@ const Page = schema({
 });
 
 const PageStyle = schema({
-    styles: [Object],
+    styles: Object,
     css: [String],
 });
+
+const alignLeft = constantly("left");
+const alignRight = constantly("right");
+const alignCenter = constantly("center");
+const alignDefault = column => column.dataType === Number ? "right" : "left";
 
 const Column = schema({
     name: String,
@@ -27,9 +32,18 @@ const Column = schema({
     value: { type: Function, default: () => function(row, data) { return row[this.name]; } },
     width: Number,
     visible: { type: Boolean, default: true },
-    dataType: { type: Function, enum: [String, Number, Boolean], default: () => String },
-    viewType: { type: String, enum: ["text", "bool", "image"], default: "text", },
-    numberFormat: String,
+    alignment: {
+        type: Function,
+        enum: [alignLeft, alignCenter, alignRight, alignDefault],
+        default: () => () => alignDefault(this),
+    },
+    dataType: { type: Function, enum: [String, Number, Boolean, Date], default: () => String },
+    viewType: {
+        type: String,
+        enum: ["char", "integer", "float", "date", "time", "datetime", "bool", "image"],
+        default: "char",
+    },
+    displayFormat: { type: Function, default: () => identity },
     boolParse: { type: Function, default: () => boolParse },
 });
 
@@ -47,6 +61,7 @@ const Grouping = schema({
 const DataSettings = schema({
     columns: [Column],
     aggregators: [Aggregator],
+    showAggregates: { type: Boolean, default: true },
     grouping: Grouping,
     orderBy: [String],
 });
@@ -54,6 +69,7 @@ const DataSettings = schema({
 const ReportSettings = schema({
     name: String,
     title: String,
+    templateName: String,
     owner: {
         name: { type: String, default: "MiniPCP" },
         address: String,

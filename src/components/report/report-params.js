@@ -1,3 +1,5 @@
+import definitionToSettings from "../../adapters/report.js";
+
 function Params({ global, api }, reportId) {
     const paramsUrl = `${ api.protocol }://${ api.host }${ api.baseUrl }/reports/${ reportId }/params`;
 
@@ -19,7 +21,10 @@ function Params({ global, api }, reportId) {
         state = "pending";
         return global.fetch(paramsUrl, { method: "GET", mode: "cors" })
             .then(r => r.json())
-            .then(p => updateParams(p));
+            .then(p => updateParams({
+                settings: definitionToSettings(p),
+                dialogParams: p.dialogParams,
+            }));
     }
 
     function getNew() {
