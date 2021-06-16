@@ -7,7 +7,7 @@ context.page.init();
 
 // TODO:
 //  [OK] Set iframe prperties to fill the page and initialize hidden
-//  - When rendering, write to iframe
+//  [OK] When rendering, write to iframe
 //  - Fill dialog fields default values
 
 // context.Reporter(context, template)
