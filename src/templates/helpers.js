@@ -40,7 +40,8 @@ function parseStyle(media) {
 }
 
 function styleSheet(settings) {
-    return `@media screen {\n${ parseStyle(settings.media.screen) }\n}\n\n` +
+    return parseStyle(settings.media.global) + "\n" +
+        `@media screen {\n${ parseStyle(settings.media.screen) }\n}\n\n` +
         `@media print {\n${ parseStyle(settings.media.print) }\n}`;
 }
 

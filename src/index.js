@@ -1,5 +1,3 @@
-import "uikit/dist/css/uikit.min.css";
-import "js-datepicker/dist/datepicker.min.css";
 import context from "./context.js";
 
 context.page.init();

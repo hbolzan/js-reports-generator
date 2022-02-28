@@ -37,6 +37,8 @@ function Page(baseContext) {
         if ( context.global.location.pathname === "/report.html" ) {
             return;
         }
+        require("uikit/dist/css/uikit.min.css");
+        require("js-datepicker/dist/datepicker.min.css");
         UIkit.sticky(document.getElementById(renderNodes.pageHeader));
         self.hideReport();
         document.getElementById(renderNodes.reportContainer).style = "";

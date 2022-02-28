@@ -1,4 +1,4 @@
-import { identity, constantly } from "../logic/misc.js";
+import { identity, constantly, assocIf } from "../logic/misc.js";
 import { formatFloat, formatDate } from "../logic/format.js";
 import {
     Margins,
@@ -119,10 +119,13 @@ function definitionToSettings(definition) {
         templateName,
         owner: toOwner(companyInfo),
         page: Page.parse({ margins: Margins.parse({}) }),
-        media: {
-            screen: pageStyle({}, defaultPageStyle.mediaScreen.styles),
-            print: pageStyle({page, html}, styles),
-        },
+        media: assocIf(
+            {
+                screen: pageStyle({}, defaultPageStyle.mediaScreen.styles),
+                print: pageStyle({page, html}, styles),
+            },
+            "global", pageStyle({}, defaultPageStyle.global.css)
+        ),
         data: dataSettings(definition),
     };
 }

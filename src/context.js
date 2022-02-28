@@ -37,7 +37,7 @@ const baseContext = {
 
     api: {
         protocol: "http",
-        host: "localhost:9999",
+        host: "localhost:3000",
         baseUrl: "/api/v1",
     },
 
