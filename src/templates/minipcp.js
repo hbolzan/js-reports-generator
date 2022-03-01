@@ -1,11 +1,23 @@
 import { trace } from "../logic/misc.js";
-import { emptyTh, tHead, tFoot, tBody, styleSheet, lineBreaksToListItems, columnsHeaderRow } from "./helpers.js";
+import { emptyTh, tHead, tFoot, tBody, styleSheet, lineBreaksToListItems } from "./helpers.js";
 
-const emptyThClass = "empty-th";
-const emptyRow = columns => columns.reduce((row, col) => ({ ...row, [col.name]: "" }), []);
+// In this template, each data element is a group
 
+const emptyThClass = "empty-th",
+      emptyRow = columns => columns.reduce((row, col) => ({ ...row, [col.name]: "" }), []);
 
- // In this template, each data element is a group
+function columnHeader(totalWidth, tr, column) {
+    const p = Math.round(column.width/totalWidth*100);
+    return column.visible ?
+        tr.concat([["th", { style: { width: `${p}%` } }, column.label || column.name]]) :
+        tr;
+}
+
+function columnsHeaderRow(data) {
+    const columns = data.columns,
+          totalWidth = columns.reduce((t, c) => t = t + c.width, 0);
+    return columns.reduce((tr, column) => columnHeader(totalWidth, tr, column), ["tr"]);
+}
 
 const MiniPCPTemplate = (context, settings) => {
     const columnsHeader = ["thead", columnsHeaderRow(settings.data)],

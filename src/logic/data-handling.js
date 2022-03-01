@@ -59,13 +59,21 @@ function coerceDate(value, { viewType }) {
     return dateStr;
 }
 
+function coerceNumber(value) {
+    const n = Number(value.replaceAll(",", "."));
+    return isNaN(n) ? "" : n;
+}
+
 function coerce(value, column) {
     const { dataType } = column;
+    if ( value === "null" || value === null ) {
+        return "";
+    }
     if (dataType === Boolean) {
         return boolParse(value);
     }
     if (dataType === Number && typeof(value) === "string") {
-        return Number(value.replaceAll(",", "."));
+        return coerceNumber(value);
     }
     if (dataType === Date) {
         return coerceDate(value, column);
