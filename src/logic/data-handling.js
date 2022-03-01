@@ -43,18 +43,38 @@ function aggregateRows(rows, aggregators) {
     );
 }
 
-function coerce(value, dataType) {
+function dateStrWithZeroTime(s) {
+    const parts = s.split("T");
+    return parts[0] + "T" + ( parts[1] || "00:00:00" );
+}
+
+function coerceDate(value, { viewType }) {
+    const dateStr = (new Date(dateStrWithZeroTime(value))).toLocaleString("pt-BR");
+    if ( viewType === "date" ) {
+        return dateStr.split(" ")[0];
+    }
+    if ( viewType === "time" ) {
+        return dateStr.split(" ")[1];
+    }
+    return dateStr;
+}
+
+function coerce(value, column) {
+    const { dataType } = column;
     if (dataType === Boolean) {
         return boolParse(value);
     }
     if (dataType === Number && typeof(value) === "string") {
         return Number(value.replaceAll(",", "."));
     }
+    if (dataType === Date) {
+        return coerceDate(value, column);
+    }
     return dataType(value);
 }
 
 function parsedColumn(column, row, data) {
-    return coerce(column.value(row, data), column.dataType);
+    return coerce(column.value(row, data), column);
 }
 
 const parseRow = (columns, row) => columns.reduce(
