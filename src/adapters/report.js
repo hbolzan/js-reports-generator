@@ -1,4 +1,4 @@
-import { identity, constantly, assocIf } from "../logic/misc.js";
+import { identity, constantly, trace, assocIf } from "../logic/misc.js";
 import { formatFloat, formatDate } from "../logic/format.js";
 import {
     Margins,
@@ -73,9 +73,8 @@ function fieldToColumn({ columnName, dataType, displayFormat, label, visible, wi
 }
 
 function toAggregator(aggregator, columns) {
-    return Aggregator.parse({
-        column: columns.filter(c => c.name === aggregator.columnName)[0],
-    });
+    const column = columns.filter(c => c.name === aggregator.columnName)[0];
+    return column ? Aggregator.parse({ column }) : null;
 }
 
 const isNotSeparatorLine = line => line.split("").filter(c => c !== "=").length > 0;
@@ -102,7 +101,7 @@ function dataSettings({ fields, aggregators, aggregatorsVisible, grouping, headL
 
     return DataSettings.parse({
         columns,
-        aggregators: aggregators.map(a => toAggregator(a, columns)),
+        aggregators: aggregators.map(a => toAggregator(a, columns)).filter(a => a !== null),
         showAggregates: aggregatorsVisible,
         grouping: toGrouping(grouping, columns),
         orderBy: [],

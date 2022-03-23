@@ -1,4 +1,3 @@
-import { trace } from "../logic/misc.js";
 import { emptyTh, tHead, tFoot, tBody, styleSheet, lineBreaksToListItems } from "./helpers.js";
 
 // In this template, each data element is a group

@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import datepicker from "js-datepicker";
 import Inputmask from "inputmask";
 import Papa from "papaparse";
+import HttpClient from "./components/http-client.js";
 import Dom from "./components/dom/dom.js";
 import Mask from "./components/report/mask.js";
 import DatePicker from "./components/report/date-picker.js";
@@ -47,6 +48,7 @@ const baseContext = {
     reportStyleSheetId: uuidv4(),
 
     UIkit,
+    HttpClient,
     datepicker,
     Inputmask,
     Papa,
