@@ -1,7 +1,9 @@
 import definitionToSettings from "../../adapters/report.js";
 
-function Params({ global, api }, reportId) {
-    const paramsUrl = `${ api.protocol }://${ api.host }${ api.baseUrl }/reports/${ reportId }/params`;
+function Params(context, reportId) {
+    const { HttpClient, api } = context,
+          httpClient = HttpClient(context),
+          paramsUrl = `${ api.protocol }://${ api.host }${ api.baseUrl }/reports/${ reportId }/params`;
 
     let params,
         pending,
@@ -19,7 +21,7 @@ function Params({ global, api }, reportId) {
 
     function fetchParams() {
         state = "pending";
-        return global.fetch(paramsUrl, { method: "GET", mode: "cors" })
+        return httpClient.GET(paramsUrl, "cors", "ATENÇÃO: O relatório selecionado não está disponível")
             .then(r => r.json())
             .then(p => updateParams({
                 settings: definitionToSettings(p),

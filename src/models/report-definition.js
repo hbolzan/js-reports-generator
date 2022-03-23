@@ -24,7 +24,7 @@ const PageStyle = schema({
 const alignLeft = constantly("left");
 const alignRight = constantly("right");
 const alignCenter = constantly("center");
-const alignDefault = column => column.dataType === Number ? "right" : "left";
+const alignDefault = column => column.dataType() === Number ? "right" : "left";
 
 const Column = schema({
     name: String,
@@ -35,7 +35,7 @@ const Column = schema({
     alignment: {
         type: Function,
         enum: [alignLeft, alignCenter, alignRight, alignDefault],
-        default: () => () => alignDefault(this),
+        default: () => function() { return this.dataType === Number ? "right" : "left"; },
     },
     dataType: { type: Function, enum: [String, Number, Boolean, Date], default: () => String },
     viewType: {

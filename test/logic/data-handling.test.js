@@ -162,15 +162,19 @@ describe("aggregateRows", () => {
     });
 });
 
-describe("coerce", () => {
+describe.only("coerce", () => {
     it("coerces value to data type", () => {
-        expect(coerce("a", String)).toBe("a");
-        expect(coerce(1, String)).toBe("1");
-        expect(coerce(1, Number)).toBe(1);
-        expect(coerce("1", Number)).toBe(1);
-        expect(coerce("a", Number)).toBeNaN();
-        expect(coerce("S", Boolean)).toBe(true);
-        expect(coerce("N", Boolean)).toBe(false);
+        expect(coerce("a", { dataType: String })).toBe("a");
+        expect(coerce(1, { dataType: String })).toBe("1");
+        expect(coerce(1, { dataType: Number })).toBe(1);
+        expect(coerce("1", { dataType: Number })).toBe(1);
+        expect(coerce("a", { dataType: Number })).toBeNaN();
+        expect(coerce("S", { dataType: Boolean })).toBe(true);
+        expect(coerce("N", { dataType: Boolean })).toBe(false);
+        expect(coerce("2022-02-15T00:00:00", { dataType: Date, viewType: "date" })).toBe("15/02/2022");
+        expect(coerce("2022-02-15", { dataType: Date, viewType: "date" })).toBe("15/02/2022");
+        expect(coerce("2022-02-15T15:30:20.123", { dataType: Date, viewType: "time" })).toBe("15:30:20");
+        expect(coerce("2022-02-15T15:30:20.123", { dataType: Date, viewType: "datetime" })).toBe("15/02/2022 15:30:20");
     });
 });
 

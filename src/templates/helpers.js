@@ -7,9 +7,20 @@ const columnsHeaderRow = data => data.columns.reduce(columnHeader, ["tr"]);
 const tHead = (data, emptyClass) => ["thead", ["tr", emptyTh(data, emptyClass)], columnsHeaderRow(data)];
 const tFoot = (data, emptyClass) => ["tfoot", ["tr", emptyTh(data, emptyClass)]];
 
-const bodyTd = (tr, value) => [...tr, ["td", String(value)]];
-const bodyTr = (columns, row) => columns.reduce((tr, column) => bodyTd(tr, row[column.name]), ["tr"]);
+const bodyTd = (tr, value, alignment) => [...tr, ["td", { style: { textAlign: alignment } }, String(value)]];
+const bodyTr = (columns, row) => columns.reduce(
+    (tr, column) => column.visible ? bodyTd(tr, row[column.name], column.alignment()) : tr,
+    ["tr"]
+);
 const tBody = data => data.rows.reduce((trs, row) => [...trs, bodyTr(data.columns, row)], ["tbody"]);
+
+function lineBreaksToListItems(s) {
+    const items = s.split("\n");
+    if (items.length < 2) {
+        return s;
+    }
+    return ["ul", { class: "uk-list" }, ...items.map(i => ["li", i])];
+}
 
 function parseCSSElement(elKey, el) {
     if (elKey == "page") {
@@ -29,8 +40,20 @@ function parseStyle(media) {
 }
 
 function styleSheet(settings) {
-    return `@media screen {\n${ parseStyle(settings.media.screen) }\n}\n\n` +
+    return parseStyle(settings.media.global) + "\n" +
+        `@media screen {\n${ parseStyle(settings.media.screen) }\n}\n\n` +
         `@media print {\n${ parseStyle(settings.media.print) }\n}`;
 }
 
-export { emptyTh, columnHeader, columnsHeaderRow, tHead, tFoot, bodyTd, bodyTr, tBody, styleSheet };
+export {
+    emptyTh,
+    columnHeader,
+    columnsHeaderRow,
+    tHead,
+    tFoot,
+    bodyTd,
+    bodyTr,
+    tBody,
+    styleSheet,
+    lineBreaksToListItems
+};
