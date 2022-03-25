@@ -4,7 +4,9 @@ import { v4 as uuidv4 } from "uuid";
 import datepicker from "js-datepicker";
 import Inputmask from "inputmask";
 import Papa from "papaparse";
+import getBrowserFingerprint from "get-browser-fingerprint";
 import HttpClient from "./components/http-client.js";
+import Auth from "./components/auth.js";
 import Dom from "./components/dom/dom.js";
 import Mask from "./components/report/mask.js";
 import DatePicker from "./components/report/date-picker.js";
@@ -40,10 +42,15 @@ const baseContext = {
         protocol: "http",
         host: "localhost:3000",
         baseUrl: "/api/v1",
+        authSignIn: "/auth/sign-in",
+        authRefresh: "/auth/refresh",
+        authSignOut: "/auth/sign-out",
     },
 
+    _: require("lodash"),
     global: window,
     document: window.document,
+    browserFingerprint: getBrowserFingerprint(),
     uuidGen: uuidv4,
     reportStyleSheetId: uuidv4(),
 
@@ -61,6 +68,11 @@ const baseContext = {
     Reporter,
 };
 
-const context = { ...baseContext, page: Page(baseContext) };
+const auth = Auth(baseContext),
+      context = {
+          ...baseContext,
+          auth,
+          page: Page({ ...baseContext, auth }),
+      };
 
 export default context;

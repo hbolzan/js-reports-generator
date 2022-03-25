@@ -1,5 +1,5 @@
 function Page(baseContext) {
-    const { UIkit, document, renderNodes } = baseContext,
+    const { UIkit, document, renderNodes, auth } = baseContext,
           self = {
               init,
               showReport: () => setReportContainerVisible(true),
@@ -44,6 +44,7 @@ function Page(baseContext) {
         document.getElementById(renderNodes.reportContainer).style = "";
         document.getElementById(renderNodes.reportCloseButton).onclick = self.hideReport;
         document.getElementById(renderNodes.reportPrintButton).onclick = printReport;
+        document.getElementById("auth-sign-in").onclick = auth.signIn;
         renderIndex();
     }
 
