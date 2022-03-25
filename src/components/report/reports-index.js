@@ -1,6 +1,6 @@
 import { capitalizeFirstLetter } from "../../logic/misc.js";
 
-function initAccordion({ id }, { UIkit, document, global }) {
+function initAccordion({ id }, { UIkit, document }) {
     UIkit.accordion(document.getElementById(id));
 }
 
@@ -29,12 +29,14 @@ function view(context, reports) {
 }
 
 function ReportsIndex(context) {
-    const { global, api, Dom } = context,
+    const { api, httpClient, Dom } = context,
+          fetchOptions = { mode: "cors", errorMessage: "ATENÇÃO O índice de relatórios não está disponível" },
           reportsUrl = `${ api.protocol }://${ api.host }${ api.baseUrl }/reports`;
 
     function index() {
-        return global.fetch(reportsUrl, { method: "GET", mode: "cors" })
+        return httpClient.GET(reportsUrl, fetchOptions)
             .then(r => r.json())
+            .then(console.log)
             .then(r => Dom(context, view(context, r.reports)));
     }
 

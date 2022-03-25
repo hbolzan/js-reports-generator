@@ -2,6 +2,7 @@ function Page(baseContext) {
     const { UIkit, document, renderNodes, auth } = baseContext,
           self = {
               init,
+              renderIndex,
               showReport: () => setReportContainerVisible(true),
               hideReport: () => setReportContainerVisible(false),
               iFrameDocument,

@@ -1,8 +1,7 @@
 import definitionToSettings from "../../adapters/report.js";
 
 function Params(context, reportId) {
-    const { HttpClient, api } = context,
-          httpClient = HttpClient(context),
+    const { httpClient, api } = context,
           paramsUrl = `${ api.protocol }://${ api.host }${ api.baseUrl }/reports/${ reportId }/params`,
           fetchOptions = {
               mode: "cors",

@@ -1,13 +1,32 @@
 import { assocIf } from "../logic/misc.js";
 
-function HttpClient({ _, auth, global, UIkit }) {
-    const fetch = global.fetch;
+const UNAUTHORIZED = 401,
+      OK = 200,
+      ERROR = 999;
 
-    function validateResponse(response, errorMessage) {
-        if ( response.status > 299 ) {
-            UIkit.modal.alert(errorMessage || `Ocorreu um erro ao acessar o recurso ${ uri }`);
-        }
-        return response;
+function HttpClient(context) {
+    const { _, auth, authDialog, global, UIkit } = context,
+          fetch = global.fetch,
+          responseActions = {
+              [OK]: (uri, res) => res,
+              [ERROR]: (uri, res, errorMessage) => {
+                  UIkit.modal.alert(errorMessage || `Ocorreu um erro ao acessar o recurso ${ uri }`);
+                  return res;
+              },
+              [UNAUTHORIZED]: (uri, res) => {
+                  authDialog.dialog();
+                  return res;
+              }
+          };
+
+    function statusToError(status) {
+        return ( status == 200 ) ? OK :
+            (( status == 401 ) ? UNAUTHORIZED : ERROR );
+    }
+
+    function validateResponse(uri, response, errorMessage) {
+        const action = responseActions[statusToError(response.status)];
+        return action(uri, response, errorMessage);
     }
 
     function requestOptions(baseOptions, { mode, body, headers }) {
@@ -21,7 +40,7 @@ function HttpClient({ _, auth, global, UIkit }) {
 
     function request(method, uri, options) {
         return fetch(uri, requestOptions({ method }, options))
-            .then(res => validateResponse(res, options.errorMessage));
+            .then(res => validateResponse(uri, res, options.errorMessage));
     }
 
     const GET = _.partial(request, "GET"),

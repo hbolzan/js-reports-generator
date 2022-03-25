@@ -6,10 +6,12 @@ import Inputmask from "inputmask";
 import Papa from "papaparse";
 import getBrowserFingerprint from "get-browser-fingerprint";
 import HttpClient from "./components/http-client.js";
-import Auth from "./components/auth.js";
+import Auth from "./components/auth/auth.js";
+import AuthDialog from "./components/auth/auth-dialog.js";
 import Dom from "./components/dom/dom.js";
 import Mask from "./components/report/mask.js";
 import DatePicker from "./components/report/date-picker.js";
+import Modal from "./components/modal.js";
 import Reporter from "./components/report/reporter.js";
 import ReportsIndex from "./components/report/reports-index.js";
 import ReportParams from "./components/report/report-params.js";
@@ -20,59 +22,76 @@ import MiniPCPTemplate from "./templates/minipcp.js";
 
 UIkit.use(Icons);
 
-const baseContext = {
-    renderNodes: {
-        dialog: "dialog-body",
-        reportsIndex: "index-body",
-        pageHeader: "page-header",
-        reportContainer: "report-container",
-        reportIFrame: "report-iframe",
-        reportBody: "report-body",
-        reportCloseButton: "report-close-button",
-        reportPrintButton: "report-print-button",
-    },
+const _ = require("lodash"),
+      global = window,
+      document = global.document,
+      uuidGen = uuidv4,
+      browserFingerprint = getBrowserFingerprint(),
 
-    templates: {
-        SimpleTemplate,
-        MiniPCPTemplate,
-        Default: SimpleTemplate,
-    },
+      api = {
+          protocol: "http",
+          host: "localhost:3000",
+          baseUrl: "/api/v1",
+          authSignIn: "/auth/sign-in",
+          authRefresh: "/auth/refresh",
+          authSignOut: "/auth/sign-out",
+      },
 
-    api: {
-        protocol: "http",
-        host: "localhost:3000",
-        baseUrl: "/api/v1",
-        authSignIn: "/auth/sign-in",
-        authRefresh: "/auth/refresh",
-        authSignOut: "/auth/sign-out",
-    },
+      templates = {
+          SimpleTemplate,
+          MiniPCPTemplate,
+          Default: SimpleTemplate,
+      },
 
-    _: require("lodash"),
-    global: window,
-    document: window.document,
-    browserFingerprint: getBrowserFingerprint(),
-    uuidGen: uuidv4,
-    reportStyleSheetId: uuidv4(),
+      renderNodes = {
+          dialog: "dialog-body",
+          reportsIndex: "index-body",
+          pageHeader: "page-header",
+          reportContainer: "report-container",
+          reportIFrame: "report-iframe",
+          reportBody: "report-body",
+          reportCloseButton: "report-close-button",
+          reportPrintButton: "report-print-button",
+      },
 
-    UIkit,
-    HttpClient,
-    datepicker,
-    Inputmask,
-    Papa,
-    Mask,
-    DatePicker,
-    Dom,
-    ReportsIndex,
-    ReportParams,
-    ReportDialog,
-    Reporter,
-};
+      independentContext = {
+          _,
+          global,
+          document,
+          UIkit,
+          Inputmask,
+          Papa,
+          Mask,
+          DatePicker,
+          datepicker,
+          browserFingerprint,
+          uuidGen,
+          reportStyleSheetId: uuidGen(),
 
-const auth = Auth(baseContext),
+          renderNodes,
+          templates,
+          api,
+
+          Modal,
+          Dom,
+          ReportsIndex,
+          ReportParams,
+          ReportDialog,
+          Reporter,
+      },
+
+      baseContext = {
+          ...independentContext,
+          auth: Auth(independentContext),
+      },
+
+      authDialog = AuthDialog(baseContext),
+      httpClient = HttpClient({ ...baseContext, authDialog }),
+
       context = {
-          ...baseContext,
-          auth,
-          page: Page({ ...baseContext, auth }),
+          httpClient,
+          authDialog,
+          page: Page({ ...baseContext, httpClient }),
       };
 
 export default context;
