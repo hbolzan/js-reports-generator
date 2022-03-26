@@ -36,7 +36,6 @@ function ReportsIndex(context) {
     function index() {
         return httpClient.GET(reportsUrl, fetchOptions)
             .then(r => r.json())
-            .then(console.log)
             .then(r => Dom(context, view(context, r.reports)));
     }
 

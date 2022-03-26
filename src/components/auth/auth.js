@@ -1,6 +1,6 @@
 function Auth(context) {
     const data = {},
-          { global, api, browserFingerprint } = context,
+          { global, api, browserFingerprint, messageBroker } = context,
           signInUrl = `${ api.protocol }://${ api.host }${ api.authSignIn }`,
           refreshUrl = `${ api.protocol }://${ api.host }${ api.authRefresh }`;
 
@@ -14,33 +14,32 @@ function Auth(context) {
         refresh();
     }
 
+    function handleAuthentication(res, topic) {
+        data.auth = {};
+        if ( res.status == 200 ) {
+            data.auth = JSON.parse(res.headers.get("auth"));
+            saveAuthData(data);
+            refreshWhileYouCan(data);
+            messageBroker.produce(topic, data);
+        } else {
+            messageBroker.produce("AUTH.UNAUTHORIZED", {});
+        }
+    };
+
     function signIn(userName, password) {
         clearTimeout(data.timedRefresh);
-        const res = fetch(
+        fetch(
             signInUrl,
             {
                 method: "POST",
                 mode: "cors",
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userName, password, browserFingerprint })
+                body: JSON.stringify({ userName, password, fingerPrint: browserFingerprint })
             }
-        );
-
-        res.then(r => {
-            data.auth = {};
-            if ( r.status == 200 ) {
-                console.log("Authenticated");
-                data.auth = JSON.parse(r.headers.get("auth"));
-                saveAuthData(data);
-                refreshWhileYouCan(data);
-            } else {
-                console.log("Authentication failed");
-            }
-        });
+        ).then(r => handleAuthentication(r, "AUTH.SIGNED-IN"));
     }
 
     function refresh() {
-        console.log("Refreshing...");
         const res = fetch(
             refreshUrl,
             {
@@ -48,13 +47,13 @@ function Auth(context) {
                 mode: "cors",
                 headers: { "Authorization": `Bearer ${ data?.auth?.token }::${ browserFingerprint }`}
             }
-        );
+        ).then(r => handleAuthentication(r, "AUTH.REFRESHED"));
+    }
 
-        res.then(r => {
-            data.auth = JSON.parse(r.headers.get("auth"));
-            saveAuthData(data);
-            refreshWhileYouCan(data);
-        });
+    function signOut() {
+        data.auth = {};
+        saveAuthData(data);
+        refresh();
     }
 
     function refreshWhileYouCan(data) {
@@ -65,7 +64,7 @@ function Auth(context) {
     }
 
     function authorizationHeader() {
-        return { "Authorization": `Bearer ${ data?.auth?.token }::${ data?.fingerPrint }`};
+        return { "Authorization": `Bearer ${ data?.auth?.token }::${ browserFingerprint }`};
     }
 
     function GET(url) {
@@ -73,7 +72,7 @@ function Auth(context) {
             url,
             {
                 cache: "no-cache",
-                headers: { "Authorization": `Bearer ${ data?.auth?.token }::${ data?.fingerPrint }`}
+                headers: { "Authorization": `Bearer ${ data?.auth?.token }::${ browserFingerprint }`}
             }
         );
         res.then(r => {
@@ -83,6 +82,7 @@ function Auth(context) {
     }
 
     recoverAuth();
+    messageBroker.listen("AUTH.SIGN-OUT-REQUESTED", signOut);
 
     return {
         signIn,

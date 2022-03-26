@@ -20,9 +20,11 @@ function Modal(context, { title, body, footer, withCloseButton }) {
         self = {};
     const { document, Dom, UIkit, uuidGen } = context,
           dom = Dom(context, modalContainer(title, body, footer, withCloseButton)),
-          modal = UIkit.modal(
-              dom.appendToDomNode(document.getElementsByTagName("body")[0]),
-              { bgClose: false }
+          el = document.getElementById("auth-dialog-modal");
+    console.log(el);
+          const modal = UIkit.modal(
+              dom.appendToDomNode(el),
+              { bgClose: false, escClose: false }
           );
 
     return Object.assign(

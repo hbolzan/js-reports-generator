@@ -1,11 +1,11 @@
-import { assocIf } from "../logic/misc.js";
+import { assocIf,trace } from "../logic/misc.js";
 
 const UNAUTHORIZED = 401,
       OK = 200,
       ERROR = 999;
 
 function HttpClient(context) {
-    const { _, auth, authDialog, global, UIkit } = context,
+    const { _, auth, global, UIkit } = context,
           fetch = global.fetch,
           responseActions = {
               [OK]: (uri, res) => res,
@@ -13,10 +13,7 @@ function HttpClient(context) {
                   UIkit.modal.alert(errorMessage || `Ocorreu um erro ao acessar o recurso ${ uri }`);
                   return res;
               },
-              [UNAUTHORIZED]: (uri, res) => {
-                  authDialog.dialog();
-                  return res;
-              }
+              [UNAUTHORIZED]: (uri, res) => res,
           };
 
     function statusToError(status) {

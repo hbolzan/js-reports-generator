@@ -1,5 +1,5 @@
 function Page(baseContext) {
-    const { UIkit, document, renderNodes, auth } = baseContext,
+    const { UIkit, document, renderNodes, messageBroker } = baseContext,
           self = {
               init,
               renderIndex,
@@ -45,8 +45,11 @@ function Page(baseContext) {
         document.getElementById(renderNodes.reportContainer).style = "";
         document.getElementById(renderNodes.reportCloseButton).onclick = self.hideReport;
         document.getElementById(renderNodes.reportPrintButton).onclick = printReport;
-        document.getElementById("auth-sign-in").onclick = auth.signIn;
+        document.getElementById("auth-sign-out").onclick = () => messageBroker.produce(
+            "AUTH.SIGN-OUT-REQUESTED", { source: self }
+        );
         renderIndex();
+        messageBroker.listen("AUTH.SIGNED-IN", renderIndex);
     }
 
     return self;
