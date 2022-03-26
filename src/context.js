@@ -5,6 +5,7 @@ import datepicker from "js-datepicker";
 import Inputmask from "inputmask";
 import Papa from "papaparse";
 import getBrowserFingerprint from "get-browser-fingerprint";
+import config from "./config.js";
 import MessageBroker from "./components/message-broker.js";
 import HttpClient from "./components/http-client.js";
 import Auth from "./components/auth/auth.js";
@@ -30,30 +31,10 @@ const _ = require("lodash"),
       browserFingerprint = getBrowserFingerprint(),
       messageBroker = MessageBroker(),
 
-      api = {
-          protocol: "http",
-          host: "localhost:3000",
-          baseUrl: "/api/v1",
-          authSignIn: "/auth/sign-in",
-          authRefresh: "/auth/refresh",
-          authSignOut: "/auth/sign-out",
-      },
-
       templates = {
           SimpleTemplate,
           MiniPCPTemplate,
           Default: SimpleTemplate,
-      },
-
-      renderNodes = {
-          dialog: "dialog-body",
-          reportsIndex: "index-body",
-          pageHeader: "page-header",
-          reportContainer: "report-container",
-          reportIFrame: "report-iframe",
-          reportBody: "report-body",
-          reportCloseButton: "report-close-button",
-          reportPrintButton: "report-print-button",
       },
 
       independentContext = {
@@ -70,9 +51,10 @@ const _ = require("lodash"),
           uuidGen,
           reportStyleSheetId: uuidGen(),
 
-          renderNodes,
+          topics: config.topics,
+          renderNodes: config.renderNodes,
           templates,
-          api,
+          api: config.api,
 
           messageBroker,
           Modal,
@@ -96,5 +78,7 @@ const _ = require("lodash"),
           authDialog,
           page: Page({ ...baseContext, httpClient }),
       };
+
+console.log("Iniciando context");
 
 export default context;

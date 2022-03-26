@@ -1,5 +1,5 @@
 function AuthDialog(context) {
-    const { document, uuidGen, UIkit, Modal, Dom, messageBroker, auth } = context,
+    const { document, uuidGen, UIkit, Modal, Dom, messageBroker, topics, auth } = context,
           dialogNode = document.getElementById(context.renderNodes.dialog),
           modalObj = {};
 
@@ -35,6 +35,12 @@ function AuthDialog(context) {
     }
 
     function show() {
+        const userEl = document.getElementById("sign-in-user"),
+              passwordEl = document.getElementById("sign-in-user");
+
+        if ( ! userEl || ! passwordEl ) {
+            return;
+        }
         document.getElementById("sign-in-user").value = "";
         document.getElementById("sign-in-password").value = "";
         modalObj.modal.show();
@@ -48,9 +54,9 @@ function AuthDialog(context) {
             footer: footer(modalObj),
             withCloseButton: false,
         });
-        messageBroker.listen("AUTH.SIGNED-IN", data => modalObj.modal.hide());
-        messageBroker.listen("AUTH.REFRESHED", data => modalObj.modal.hide());
-        messageBroker.listen("AUTH.UNAUTHORIZED", () => show());
+        messageBroker.listen(topics.AUTH__SIGNED_IN, data => modalObj?.modal?.hide());
+        messageBroker.listen(topics.AUTH__REFRESHED, data => modalObj?.modal?.hide());
+        messageBroker.listen(topics.AUTH__UNAUTHORIZED, () => show());
     }
 
     init();

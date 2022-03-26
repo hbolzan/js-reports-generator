@@ -5,7 +5,7 @@ const UNAUTHORIZED = 401,
       ERROR = 999;
 
 function HttpClient(context) {
-    const { _, auth, global, UIkit } = context,
+    const { _, auth, global, messageBroker, topics, UIkit } = context,
           fetch = global.fetch,
           responseActions = {
               [OK]: (uri, res) => res,
@@ -13,7 +13,10 @@ function HttpClient(context) {
                   UIkit.modal.alert(errorMessage || `Ocorreu um erro ao acessar o recurso ${ uri }`);
                   return res;
               },
-              [UNAUTHORIZED]: (uri, res) => res,
+              [UNAUTHORIZED]: (uri, res) => {
+                  messageBroker.produce(topics.AUTH__UNAUTHORIZED, {});
+                  return res;
+              },
           };
 
     function statusToError(status) {
