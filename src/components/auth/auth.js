@@ -6,9 +6,9 @@ function Auth(context) {
           storageName = getStorageName(browserFingerprint);
 
     function getStorageName(fingerPrint) {
-        // WMRGAT - WebMrp Report Generator Auth Token
+        // JSRGAT - JS Reports Generator Auth Token
         const s = String(fingerPrint);
-        return "wmrgat-" + s.slice(0, 2) + s.slice(-2);
+        return "jsrgat-" + s.slice(0, 2) + s.slice(-2);
     }
 
     function saveAuthData(data) {
