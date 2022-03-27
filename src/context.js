@@ -81,6 +81,4 @@ const _ = require("lodash"),
           page: Page({ ...baseContext, httpClient }),
       };
 
-console.log("Iniciando context");
-
 export default context;
