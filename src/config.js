@@ -10,7 +10,6 @@ function Config({ _, templates }) {
 
         api: {
             host: host(),
-            // host: "http://127.0.0.1:3000",
             baseUrl: "/api/v1",
             authBaseUrl: "/auth",
             authSignIn: "sign-in",
