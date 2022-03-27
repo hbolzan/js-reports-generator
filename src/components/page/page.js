@@ -1,7 +1,8 @@
 function Page(baseContext) {
-    const { UIkit, document, renderNodes } = baseContext,
+    const { UIkit, document, renderNodes, messageBroker, topics, ReportsIndex } = baseContext,
           self = {
               init,
+              renderIndex,
               showReport: () => setReportContainerVisible(true),
               hideReport: () => setReportContainerVisible(false),
               iFrameDocument,
@@ -9,7 +10,7 @@ function Page(baseContext) {
           context = { ...baseContext, page: self };
 
     function renderIndex() {
-        context.ReportsIndex(context)
+        ReportsIndex(context)
             .index()
             .then(dom => dom.render(renderNodes.reportsIndex));
     }
@@ -44,6 +45,10 @@ function Page(baseContext) {
         document.getElementById(renderNodes.reportContainer).style = "";
         document.getElementById(renderNodes.reportCloseButton).onclick = self.hideReport;
         document.getElementById(renderNodes.reportPrintButton).onclick = printReport;
+        document.getElementById("auth-sign-out").onclick = () => messageBroker.produce(
+            topics.AUTH__SIGN_OUT_REQUESTED, { source: self }
+        );
+        messageBroker.listen(topics.AUTH__SIGNED_IN, renderIndex);
         renderIndex();
     }
 

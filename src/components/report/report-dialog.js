@@ -23,7 +23,7 @@ const reportArguments = id => pipe(id, [inputsById, collectArguments]);
 
 function ReportDialog(context, reportSettings) {
     const id = reportSettings.settings.name,
-          dialogNode = document.getElementById(context.renderNodes.dialog),
+          dialogNode = context.document.getElementById(context.renderNodes.dialog),
           reporter = context.Reporter(context, reportSettings);
 
     function buttonClick() {

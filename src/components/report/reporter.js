@@ -1,23 +1,23 @@
 import { parsedToData, argumentsToQueryString } from "../../logic/reporter.js";
 import definitionToSettings from "../../adapters/report.js";
 import { prepare } from "../../logic/data-handling.js";
-import { constantly, trace } from "../../logic/misc.js";
+import { constantly } from "../../logic/misc.js";
 
 function Template(context, settings) {
     return (context.templates[settings.templateName] || context.templates.MiniPCPTemplate)(context, settings);
 }
 
 function Reporter(context, { settings }) {
-    const { api, global, Dom, Papa, reportStyleSheetId, page } = context,
+    const { config, httpClient, Dom, Papa, reportStyleSheetId, page } = context,
           reportId = settings.name,
-          dataUrl = `${ api.protocol }://${ api.host }${ api.baseUrl }/reports/${ reportId }/data`,
+          dataUrl = config.apiUrl(`reports/${ reportId }/data`),
           template = Template(context, settings),
           iFrameDocument = page.iFrameDocument();
 
     function fetch(queryString) {
-        return global.fetch(
+        return httpClient.GET(
             dataUrl + (queryString ? "?" + queryString : ""),
-            { method: "GET", mode: "cors" }
+            { mode: "cors", errorMessage: "ATENÇÃO O relatório selecionado não está disponível" }
         ).then(r => r.text());
     }
 

@@ -28,6 +28,7 @@
         "webpack-dev-server": "^3.11.2"
     },
     "dependencies": {
+        "get-browser-fingerprint": "^2.0.1",
         "inputmask": "^5.0.5",
         "js-datepicker": "^5.18.0",
         "lodash": "^4.17.21",

@@ -1,7 +1,7 @@
 import { hiccupToObj, objToHtml, indexNodes } from "../../logic/hiccup.js";
 
 function Dom(context, hiccup, css = "") {
-    const { document, uuidGen, i18n } = context,
+    const { document, uuidGen } = context,
           asObj = hiccupToObj(hiccup, uuidGen),
           hiccupHashMap = indexNodes(asObj),
           asHtml = objToHtml(asObj),

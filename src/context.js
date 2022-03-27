@@ -4,10 +4,16 @@ import { v4 as uuidv4 } from "uuid";
 import datepicker from "js-datepicker";
 import Inputmask from "inputmask";
 import Papa from "papaparse";
+import getBrowserFingerprint from "get-browser-fingerprint";
+import Config from "./config.js";
+import MessageBroker from "./components/message-broker.js";
 import HttpClient from "./components/http-client.js";
+import Auth from "./components/auth/auth.js";
+import AuthDialog from "./components/auth/auth-dialog.js";
 import Dom from "./components/dom/dom.js";
 import Mask from "./components/report/mask.js";
 import DatePicker from "./components/report/date-picker.js";
+import Modal from "./components/modal.js";
 import Reporter from "./components/report/reporter.js";
 import ReportsIndex from "./components/report/reports-index.js";
 import ReportParams from "./components/report/report-params.js";
@@ -18,49 +24,61 @@ import MiniPCPTemplate from "./templates/minipcp.js";
 
 UIkit.use(Icons);
 
-const baseContext = {
-    renderNodes: {
-        dialog: "dialog-body",
-        reportsIndex: "index-body",
-        pageHeader: "page-header",
-        reportContainer: "report-container",
-        reportIFrame: "report-iframe",
-        reportBody: "report-body",
-        reportCloseButton: "report-close-button",
-        reportPrintButton: "report-print-button",
-    },
+const _ = require("lodash"),
+      global = window,
+      document = global.document,
+      uuidGen = uuidv4,
+      browserFingerprint = getBrowserFingerprint(),
+      messageBroker = MessageBroker(),
 
-    templates: {
-        SimpleTemplate,
-        MiniPCPTemplate,
-        Default: SimpleTemplate,
-    },
+      templates = {
+          SimpleTemplate,
+          MiniPCPTemplate,
+          Default: SimpleTemplate,
+      },
+      config = Config({ _, templates }),
 
-    api: {
-        protocol: "http",
-        host: "localhost:3000",
-        baseUrl: "/api/v1",
-    },
+      independentContext = {
+          _,
+          global,
+          document,
+          UIkit,
+          Inputmask,
+          Papa,
+          Mask,
+          DatePicker,
+          datepicker,
+          browserFingerprint,
+          uuidGen,
+          reportStyleSheetId: uuidGen(),
 
-    global: window,
-    document: window.document,
-    uuidGen: uuidv4,
-    reportStyleSheetId: uuidv4(),
+          config,
+          topics: config.topics,
+          renderNodes: config.renderNodes,
+          templates,
+          api: config.api,
 
-    UIkit,
-    HttpClient,
-    datepicker,
-    Inputmask,
-    Papa,
-    Mask,
-    DatePicker,
-    Dom,
-    ReportsIndex,
-    ReportParams,
-    ReportDialog,
-    Reporter,
-};
+          messageBroker,
+          Modal,
+          Dom,
+          ReportsIndex,
+          ReportParams,
+          ReportDialog,
+          Reporter,
+      },
 
-const context = { ...baseContext, page: Page(baseContext) };
+      baseContext = {
+          ...independentContext,
+          auth: Auth(independentContext),
+      },
+
+      authDialog = AuthDialog(baseContext),
+      httpClient = HttpClient({ ...baseContext, authDialog }),
+
+      context = {
+          httpClient,
+          authDialog,
+          page: Page({ ...baseContext, httpClient }),
+      };
 
 export default context;
