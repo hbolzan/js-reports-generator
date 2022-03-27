@@ -1,8 +1,8 @@
 function Auth(context) {
     const data = {},
-          { global, api, browserFingerprint, messageBroker, topics } = context,
-          signInUrl = `${ api.protocol }://${ api.host }${ api.authSignIn }`,
-          refreshUrl = `${ api.protocol }://${ api.host }${ api.authRefresh }`,
+          { global, config, browserFingerprint, messageBroker, topics } = context,
+          signInUrl = config.authUrl(config.api.authSignIn),
+          refreshUrl = config.authUrl(config.api.authRefresh),
           storageName = getStorageName(browserFingerprint);
 
     function getStorageName(fingerPrint) {

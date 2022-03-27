@@ -29,9 +29,9 @@ function view(context, reports) {
 }
 
 function ReportsIndex(context) {
-    const { api, httpClient, Dom } = context,
+    const { config, httpClient, Dom } = context,
           fetchOptions = { mode: "cors", errorMessage: "ATENÇÃO O índice de relatórios não está disponível" },
-          reportsUrl = `${ api.protocol }://${ api.host }${ api.baseUrl }/reports`;
+          reportsUrl = config.apiUrl("reports");
 
     function index() {
         return httpClient.GET(reportsUrl, fetchOptions)

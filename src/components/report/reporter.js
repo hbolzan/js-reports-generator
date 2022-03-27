@@ -8,9 +8,9 @@ function Template(context, settings) {
 }
 
 function Reporter(context, { settings }) {
-    const { api, httpClient, Dom, Papa, reportStyleSheetId, page } = context,
+    const { config, httpClient, Dom, Papa, reportStyleSheetId, page } = context,
           reportId = settings.name,
-          dataUrl = `${ api.protocol }://${ api.host }${ api.baseUrl }/reports/${ reportId }/data`,
+          dataUrl = config.apiUrl(`reports/${ reportId }/data`),
           template = Template(context, settings),
           iFrameDocument = page.iFrameDocument();
 

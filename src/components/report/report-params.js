@@ -1,8 +1,8 @@
 import definitionToSettings from "../../adapters/report.js";
 
 function Params(context, reportId) {
-    const { httpClient, api } = context,
-          paramsUrl = `${ api.protocol }://${ api.host }${ api.baseUrl }/reports/${ reportId }/params`,
+    const { httpClient, config } = context,
+          paramsUrl = config.apiUrl(`reports/${ reportId }/params`),
           fetchOptions = {
               mode: "cors",
               errorMessage: "ATENÇÃO: O relatório selecionado não está disponível"

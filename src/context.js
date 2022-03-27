@@ -5,7 +5,7 @@ import datepicker from "js-datepicker";
 import Inputmask from "inputmask";
 import Papa from "papaparse";
 import getBrowserFingerprint from "get-browser-fingerprint";
-import config from "./config.js";
+import Config from "./config.js";
 import MessageBroker from "./components/message-broker.js";
 import HttpClient from "./components/http-client.js";
 import Auth from "./components/auth/auth.js";
@@ -36,6 +36,7 @@ const _ = require("lodash"),
           MiniPCPTemplate,
           Default: SimpleTemplate,
       },
+      config = Config({ _, templates }),
 
       independentContext = {
           _,
@@ -51,6 +52,7 @@ const _ = require("lodash"),
           uuidGen,
           reportStyleSheetId: uuidGen(),
 
+          config,
           topics: config.topics,
           renderNodes: config.renderNodes,
           templates,

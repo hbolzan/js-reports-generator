@@ -30,7 +30,7 @@ function AuthDialog(context) {
             onclick: signIn,
             class: ["uk-button", "uk-button-primary", "uk-button-large", "uk-align-right"]
         },
-                ["span", { ukIcon: "unlock"}],
+                ["span", { ukIcon: "sign-in"}],
                 ["span", { class: ["uk-margin-small-left"] }, "ENTRAR"]];
     }
 
