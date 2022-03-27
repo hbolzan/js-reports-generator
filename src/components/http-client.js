@@ -1,4 +1,4 @@
-import { assocIf,trace } from "../logic/misc.js";
+import { assocIf } from "../logic/misc.js";
 
 const UNAUTHORIZED = 401,
       OK = 200,

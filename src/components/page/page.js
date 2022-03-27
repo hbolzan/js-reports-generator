@@ -16,7 +16,10 @@ function Page(baseContext) {
     }
 
     function setReportContainerVisible(state) {
-        document.getElementById(renderNodes.reportContainer).hidden = ! state;
+        const el = document.getElementById(renderNodes.reportContainer);
+        if ( el ) {
+            el.hidden = ! state;
+        }
     }
 
     function iFrameWindow() {
