@@ -20,7 +20,6 @@ function AuthDialog(context) {
     function signIn() {
         const userName = document.getElementById("sign-in-user").value,
               password = document.getElementById("sign-in-password").value;
-        console.log(userName, password);
         auth.signIn(userName, password);
     }
 

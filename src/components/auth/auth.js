@@ -35,7 +35,6 @@ function Auth(context) {
     };
 
     function signIn(userName, password) {
-        console.log("Sign in", browserFingerprint);
         clearTimeout(data.timedRefresh);
         fetch(
             signInUrl,
@@ -49,7 +48,6 @@ function Auth(context) {
     }
 
     function refresh() {
-        console.log("Rrefresh", browserFingerprint);
         const res = fetch(
             refreshUrl,
             {
