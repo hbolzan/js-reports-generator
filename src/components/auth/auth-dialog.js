@@ -3,18 +3,18 @@ function AuthDialog(context) {
           dialogNode = document.getElementById(context.renderNodes.dialog),
           modalObj = {};
 
-    function dlgInput(caption, id) {
+    function dlgInput(caption, id, type="text") {
         return ["div", { class: ["uk-margin"] },
                 ["label", { class: ["uk-text-bold", "uk-form-label"] }, caption],
                 ["div", { class: ["uk-form-controls"] },
-                 ["input", { id, class: ["uk-input"] }]]];
+                 ["input", { id, class: ["uk-input"], type }]]];
     }
 
     function dlgForm() {
         return ["form", { class: ["uk-form-stacked"] },
                 ["div", { class: ["uk-form-controls"] },
                  dlgInput("Nome de usuário", "sign-in-user"),
-                 dlgInput("Senha", "sign-in-password")]];
+                 dlgInput("Senha", "sign-in-password", "password")]];
     }
 
     function signIn() {

@@ -2,16 +2,22 @@ function Auth(context) {
     const data = {},
           { global, api, browserFingerprint, messageBroker, topics } = context,
           signInUrl = `${ api.protocol }://${ api.host }${ api.authSignIn }`,
-          refreshUrl = `${ api.protocol }://${ api.host }${ api.authRefresh }`;
+          refreshUrl = `${ api.protocol }://${ api.host }${ api.authRefresh }`,
+          storageName = getStorageName(browserFingerprint);
+
+    function getStorageName(fingerPrint) {
+        // WMRGAT - WebMrp Report Generator Auth Token
+        const s = String(fingerPrint);
+        return "wmrgat-" + s.slice(0, 2) + s.slice(-2);
+    }
 
     function saveAuthData(data) {
-        global.localStorage.setItem("wmrgat", JSON.stringify(data.auth));
+        global.localStorage.setItem(storageName, JSON.stringify(data.auth));
         return data;
     }
 
     function getAuthData() {
-        // WMRGAT - WebMrp Report Generator Auth Token
-        data.auth = JSON.parse(global.localStorage.getItem("wmrgat"));
+        data.auth = JSON.parse(global.localStorage.getItem(storageName));
         return data;
     }
 
@@ -29,6 +35,7 @@ function Auth(context) {
     };
 
     function signIn(userName, password) {
+        console.log("Sign in", browserFingerprint);
         clearTimeout(data.timedRefresh);
         fetch(
             signInUrl,
@@ -42,7 +49,7 @@ function Auth(context) {
     }
 
     function refresh() {
-        console.log("Refreshing", data);
+        console.log("Rrefresh", browserFingerprint);
         const res = fetch(
             refreshUrl,
             {
@@ -68,7 +75,6 @@ function Auth(context) {
 
     function authorizationHeader() {
         const data = getAuthData();
-        console.log("Requesting", data);
         return { "Authorization": `Bearer ${ data?.auth?.token }::${ browserFingerprint }`};
     }
 
