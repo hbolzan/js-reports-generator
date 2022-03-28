@@ -1,4 +1,4 @@
-import { boolParse, pipe } from "../../src/logic/misc.js";
+import { boolParse, assocIf } from "../../src/logic/misc.js";
 
 describe("boolParse", () => {
     it("converts input to a boolean result", () => {
@@ -18,5 +18,17 @@ describe("boolParse", () => {
         expect(boolParse("yes")).toBe(true);
         expect(boolParse("true")).toBe(true);
         expect(boolParse(1)).toBe(true);
+        expect(boolParse(1)).toBe(true);
+    });
+});
+
+describe("assocIf", () => {
+    it("assocs new key to object if value is not empty", () => {
+        const d = new Date();
+        expect(assocIf({ a: 1 }, "b", null)).toEqual({ a: 1 });
+        expect(assocIf({ a: 1 }, "b", 2)).toEqual({ a: 1, b: 2 });
+        expect(assocIf({ a: 1 }, "b", d)).toEqual({ a: 1, b: d });
+        expect(assocIf({ a: 1 }, "b", true)).toEqual({ a: 1, b: true });
+        expect(assocIf({ a: 1 }, "b", false)).toEqual({ a: 1, b: false });
     });
 });

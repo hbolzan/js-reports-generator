@@ -1,4 +1,4 @@
-import { identity, constantly, trace, assocIf } from "../logic/misc.js";
+import { identity, constantly, assocIf } from "../logic/misc.js";
 import { formatFloat, formatDate } from "../logic/format.js";
 import {
     Margins,

@@ -5,7 +5,7 @@ function baseAttrs(id, name) {
 }
 
 function textInput({ uuidGen }, param) {
-    return ["input", baseAttrs(uuidGen(), param.name.from)];
+    return ["input", { ...baseAttrs(uuidGen(), param.name.from), value: param.suggestion.from }];
 }
 
 function typeIsInt(paramType) {
@@ -14,13 +14,15 @@ function typeIsInt(paramType) {
 
 function numericInput(context, param, origin) {
     const { uuidGen, Mask } = context,
-          maskMethod = typeIsInt(param.type) ? "int" : "float";
+          maskMethod = typeIsInt(param.type) ? "int" : "float",
+          suggestion = param.suggestion[origin];
     return [
         "input",
         {
             ...baseAttrs(uuidGen(), param.name[origin]),
             private: { init: context.Mask(context)[maskMethod] },
-        }
+            value: suggestion,
+        },
     ];
 }
 
@@ -71,6 +73,21 @@ function checkBox(context, param, origin) {
              ["span", { class: ["uk-text-bold", "uk-margin-left"] }, param.caption]]];
 }
 
+const dateInitFns = {
+    DATE: (date) => date,
+    DIA1: (date) => new Date(date.getFullYear(), date.getMonth(), 1),
+    DMAX: (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0),
+};
+
+function dateInputSuggestion(param, origin) {
+    const fn = dateInitFns[param.suggestion[origin]];
+    return fn ? fn(new Date()) : null;
+}
+
+function datePickerInit(context, suggestion) {
+    return (node, context) => context.DatePicker(context).init(suggestion, node, context);
+}
+
 function dateInput(context, param, origin) {
     return ["div", { class: ["uk-inline"]},
             ["input", {
@@ -80,10 +97,9 @@ function dateInput(context, param, origin) {
                 type: "text",
                 dataSubType: "date",
                 style: { cursor: "pointer" },
-                private: { init: context.DatePicker(context).init }
+                private: { init: datePickerInit(context, dateInputSuggestion(param, origin)) },
             }],
-            ["span", { class: ["uk-form-icon", "uk-form-icon-flip"], ukIcon: "calendar" }],
-           ];
+            ["span", { class: ["uk-form-icon", "uk-form-icon-flip"], ukIcon: "calendar" }]];
 }
 
 const inputs = {
