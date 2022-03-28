@@ -1,3 +1,5 @@
+import { assocIf } from "../../logic/misc.js";
+
 const abbreviatedWeekDays = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
       abbreviatedMonthsNames = [
           "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"
@@ -21,20 +23,23 @@ const datePickerFormatter = (input, date, instance) => {
     input.value = date.toLocaleDateString("pt-BR");
 };
 
-const datePickerOptions = {
-    formatter: datePickerFormatter,
-    position: "br",
-    customDays: abbreviatedWeekDays,
-    customMonths: fullMonthsNames,
-    customOverlayMonths: abbreviatedMonthsNames,
-    overlayButton: "Confirmar",
-    overlayPlaceholder: "Ano no formato AAAA",
-    showAllDates: true,
-    respectDisabledReadOnly: true,
-};
+function datePickerOptions(suggestion) {
+    console.log(suggestion);
+    return assocIf({
+        formatter: datePickerFormatter,
+        position: "br",
+        customDays: abbreviatedWeekDays,
+        customMonths: fullMonthsNames,
+        customOverlayMonths: abbreviatedMonthsNames,
+        overlayButton: "Confirmar",
+        overlayPlaceholder: "Ano no formato AAAA",
+        showAllDates: true,
+        respectDisabledReadOnly: true,
+    }, "dateSelected", suggestion);
+}
 
-function init ({ id }, { Inputmask, datepicker, document }) {
-    datepicker(`#${ id }`, datePickerOptions);
+function init (suggestion, { id }, { Inputmask, datepicker, document }) {
+    datepicker(`#${ id }`, datePickerOptions(suggestion));
     Inputmask({
         alias: "datetime",
         inputFormat: "dd/mm/yyyy",
