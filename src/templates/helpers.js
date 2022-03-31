@@ -7,7 +7,7 @@ const columnsHeaderRow = data => data.columns.reduce(columnHeader, ["tr"]);
 const tHead = (data, emptyClass) => ["thead", ["tr", emptyTh(data, emptyClass)], columnsHeaderRow(data)];
 const tFoot = (data, emptyClass) => ["tfoot", ["tr", emptyTh(data, emptyClass)]];
 
-const bodyTd = (tr, value, alignment) => [...tr, ["td", { style: { textAlign: alignment } }, String(value)]];
+const bodyTd = (tr, value, alignment) => [...tr, ["td", { style: { textAlign: alignment || "center" } }, String(value)]];
 const bodyTr = (columns, row) => columns.reduce(
     (tr, column) => column.visible ? bodyTd(tr, row[column.name], column.alignment()) : tr,
     ["tr"]

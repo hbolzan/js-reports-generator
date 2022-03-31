@@ -1,28 +1,32 @@
-import { constantly } from "./misc.js";
+import { constantly, assocIf } from "./misc.js";
 
 function baseAttrs(id, name) {
     return { id, name, class: ["uk-input"]};
 }
 
 function textInput({ uuidGen }, param) {
-    return ["input", { ...baseAttrs(uuidGen(), param.name.from), value: param.suggestion.from }];
+    const suggestion = param?.suggestion?.from;
+    return ["input", assocIf({ ...baseAttrs(uuidGen(), param.name.from), }, "value", suggestion)];
 }
 
 function typeIsInt(paramType) {
     return paramType === "ptInt" || paramType === "ptIntRange";
 }
 
+function paramSuggestion(param, origin) {
+    return param.suggestion ? param.suggestion[origin] : null;
+}
+
 function numericInput(context, param, origin) {
     const { uuidGen, Mask } = context,
           maskMethod = typeIsInt(param.type) ? "int" : "float",
-          suggestion = param.suggestion[origin];
+          suggestion = paramSuggestion(param, origin);
     return [
         "input",
-        {
+        assocIf({
             ...baseAttrs(uuidGen(), param.name[origin]),
             private: { init: context.Mask(context)[maskMethod] },
-            value: suggestion,
-        },
+        }, "value", suggestion),
     ];
 }
 
@@ -80,7 +84,7 @@ const dateInitFns = {
 };
 
 function dateInputSuggestion(param, origin) {
-    const fn = dateInitFns[param.suggestion[origin]];
+    const fn = dateInitFns[paramSuggestion(param, origin)];
     return fn ? fn(new Date()) : null;
 }
 

@@ -162,13 +162,12 @@ describe("aggregateRows", () => {
     });
 });
 
-describe.only("coerce", () => {
+describe("coerce", () => {
     it("coerces value to data type", () => {
         expect(coerce("a", { dataType: String })).toBe("a");
         expect(coerce(1, { dataType: String })).toBe("1");
         expect(coerce(1, { dataType: Number })).toBe(1);
         expect(coerce("1", { dataType: Number })).toBe(1);
-        expect(coerce("a", { dataType: Number })).toBeNaN();
         expect(coerce("S", { dataType: Boolean })).toBe(true);
         expect(coerce("N", { dataType: Boolean })).toBe(false);
         expect(coerce("2022-02-15T00:00:00", { dataType: Date, viewType: "date" })).toBe("15/02/2022");

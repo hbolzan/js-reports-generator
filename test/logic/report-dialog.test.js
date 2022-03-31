@@ -131,18 +131,19 @@ describe("Report params dialog input", () => {
               dateInputFrom = dlgInput({ DatePicker, uuidGen: constantly("abdc") }, dateRangeParam, "from"),
               dateInputTo = dlgInput({ DatePicker, uuidGen: constantly("wxyz") }, dateRangeParam, "to");
         expect(dateInputFrom)
-            .toStrictEqual(["div", { class: ["uk-inline"]},
+            .toEqual(["div", { class: ["uk-inline"]},
                             ["input", {
                                 id: "abdc",
                                 name: "start_date",
                                 class: ["uk-input"],
+                                dataSubType: "date",
                                 type: "text",
                                 style: { cursor: "pointer" },
-                                private: { init }
+                                private: { init: expect.any(Function) },
                             }],
                             ["span", { class: ["uk-form-icon", "uk-form-icon-flip"], ukIcon: "calendar" }],
                            ]);
-        expect(dateInputFrom[2][1].private.init).toBe(init);
+        expect(dateInputFrom[2][1].private.init).toEqual(expect.any(Function));
         expect(dateInputTo[2][1].name).toBe("end_date");
     });
 });
@@ -164,7 +165,7 @@ describe("Report params dialog form", () => {
                   "suggestion": { "from": "0", "to": "" },
               },
           ],
-          reportParams = { title: "Test Report", dialogParams };
+          reportParams = { settings: { title: "Test Report"}, dialogParams };
 
     const expected = ["div", {"class": ["uk-card", "uk-card-default", "uk-card-hover", "uk-card-body", "uk-width-2-3"]},
  ["h3", {"class": ["uk-card-title"]}, "Test Report"],
@@ -178,9 +179,10 @@ describe("Report params dialog form", () => {
           "id": "xyz-from",
           "name": "d_ini",
           "class": ["uk-input"],
+          dataSubType: "date",
           "type": "text",
           "style": {"cursor": "pointer"},
-          "private": { init }
+          private: { init: expect.any(Function) },
       }],
       ["span", {"class": ["uk-form-icon", "uk-form-icon-flip"], "ukIcon": "calendar"}]]],
     ["div", {"class": ["uk-inline"]},
@@ -189,16 +191,17 @@ describe("Report params dialog form", () => {
           "id": "xyz-to",
           "name": "d_fim",
           "class": ["uk-input"],
+          dataSubType: "date",
           "type": "text",
           "style": {"cursor": "pointer"},
-          "private": { init }
+          private: { init: expect.any(Function) },
       }],
       ["span", {"class": ["uk-form-icon", "uk-form-icon-flip"], "ukIcon": "calendar"}]]]]],
   ["div", {"class": ["uk-margin"]},
    ["label", {"class": ["uk-text-bold", "uk-form-label"], "for": "abc"}, "Código do vendedor (zero para todos)"],
    ["div", {"class": ["uk-form-controls"]},
-    ["input", {"id": "abc", "name": "vnd_cod", "class": ["uk-input"], "private": { init: intMask }}]]]],
- ["a", {"href": "", "class": ["uk-button", "uk-button-primary", "uk-button-large", "uk-margin-large-top", "uk-align-right"]},
+    ["input", {"id": "abc", "name": "vnd_cod", "class": ["uk-input"], "private": { init: intMask }, value: "0"}]]]],
+ ["div", {"href": "", onclick: undefined, "class": ["uk-button", "uk-button-primary", "uk-button-large", "uk-margin-large-top", "uk-align-right"]},
   ["span", {"ukIcon": "print"}],
   ["span", {"class": ["uk-margin-small-left"]}, "GERAR RELATÓRIO"]]];
 
