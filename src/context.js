@@ -20,7 +20,7 @@ import ReportParams from "./components/report/report-params.js";
 import ReportDialog from "./components/report/report-dialog.js";
 import Page from "./components/page/page.js";
 import SimpleTemplate from "./templates/simple.js";
-import MiniPCPTemplate from "./templates/minipcp.js";
+import GroupdDataTemplate from "./templates/grouped.js";
 
 UIkit.use(Icons);
 
@@ -33,8 +33,8 @@ const _ = require("lodash"),
 
       templates = {
           SimpleTemplate,
-          MiniPCPTemplate,
-          Default: SimpleTemplate,
+          GroupdDataTemplate,
+          Default: GroupdDataTemplate,
       },
       config = Config({ _, templates }),
 
@@ -72,12 +72,11 @@ const _ = require("lodash"),
           auth: Auth(independentContext),
       },
 
-      authDialog = AuthDialog(baseContext),
-      httpClient = HttpClient({ ...baseContext, authDialog }),
+      httpClient = HttpClient(baseContext),
 
       context = {
           httpClient,
-          authDialog,
+          authDialog: AuthDialog(baseContext),
           page: Page({ ...baseContext, httpClient }),
       };
 

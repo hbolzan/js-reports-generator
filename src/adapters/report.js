@@ -1,5 +1,5 @@
 import { identity, constantly, assocIf } from "../logic/misc.js";
-import { formatFloat, formatDate } from "../logic/format.js";
+import { formatInteger, formatFloat, formatDate } from "../logic/format.js";
 import {
     Margins,
     PageStyle,
@@ -47,7 +47,7 @@ const defaultDisplayFormats = {
     char: identity,
     bool: identity,
     image: identity,
-    integer: Intl.NumberFormat("pt-BR").format,
+    integer: formatInteger,
     float: n => formatFloat(n, "#.##"),
     date: formatDate,
     datetime: formatDate,

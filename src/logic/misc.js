@@ -29,4 +29,4 @@ const pipe = (value, functions) => functions.reduce((v, f) => f(v), value);
 const capitalizeFirstLetter = string => string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 const assocIf = (o, k, v) => ( isEmpty(v) ) ? o : { ...o, [k]: v };
 
-export { trace, boolParse, identity, constantly, pipe, capitalizeFirstLetter, assocIf };
+export { trace, isEmpty, boolParse, identity, constantly, pipe, capitalizeFirstLetter, assocIf };

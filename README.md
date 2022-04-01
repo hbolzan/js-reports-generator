@@ -6,6 +6,17 @@ Create templates, then just add data and some arguments. It will do the rest.
 
 ## Components
 
+### Auth
+
+Path: `components/auth/auth.js`
+
+JWT authencation client.
+
+### MessageBroker
+Path: `components/message-broker.js`
+
+A very simple, asynchronous message broker to allow keeping components decoupled.
+
 ### ReportsIndex
 Path: `components/report/reports-index.js`
 

@@ -59,9 +59,8 @@ function coerceDate(value, { viewType }) {
     return dateStr;
 }
 
-function coerceNumber(value) {
-    const n = Number(value.replaceAll(",", "."));
-    return isNaN(n) ? "" : n;
+function coerceNumber(value, column) {
+    return Number(value.replaceAll(",", "."));
 }
 
 function coerce(value, column) {
@@ -73,7 +72,7 @@ function coerce(value, column) {
         return boolParse(value);
     }
     if (dataType === Number && typeof(value) === "string") {
-        return coerceNumber(value);
+        return coerceNumber(value, column);
     }
     if (dataType === Date) {
         return coerceDate(value, column);

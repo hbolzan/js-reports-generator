@@ -7,12 +7,24 @@ const columnsHeaderRow = data => data.columns.reduce(columnHeader, ["tr"]);
 const tHead = (data, emptyClass) => ["thead", ["tr", emptyTh(data, emptyClass)], columnsHeaderRow(data)];
 const tFoot = (data, emptyClass) => ["tfoot", ["tr", emptyTh(data, emptyClass)]];
 
-const bodyTd = (tr, value, alignment) => [...tr, ["td", { style: { textAlign: alignment || "center" } }, String(value)]];
-const bodyTr = (columns, row) => columns.reduce(
-    (tr, column) => column.visible ? bodyTd(tr, row[column.name], column.alignment()) : tr,
+const bodyCell = (cellTag, tr, value, alignment) => [
+    ...tr,
+    [cellTag, { style: { textAlign: alignment || "center" } }, String(value)]
+];
+
+const bodyTd = (tr, value, alginment) => bodyCell("td", tr, value, alginment);
+const bodyTh = (tr, value, alginment) => bodyCell("th", tr, value, alginment);
+
+const bodyRow = (cellFn, columns, row) => columns.reduce(
+    (tr, column) => column.visible ?
+        cellFn(tr, column.displayFormat(row[column.name]), column.alignment()) :
+        tr,
     ["tr"]
 );
-const tBody = data => data.rows.reduce((trs, row) => [...trs, bodyTr(data.columns, row)], ["tbody"]);
+
+const bodyTr = (columns, row) => bodyRow(bodyTd, columns, row);
+const bodyAggrTr = (columns, row) => bodyRow(bodyTh, columns, row);
+const tBody = data => data.rows.reduce((body, row) => [...body, bodyTr(data.columns, row)], ["tbody"]);
 
 function lineBreaksToListItems(s) {
     const items = s.split("\n");
@@ -53,6 +65,7 @@ export {
     tFoot,
     bodyTd,
     bodyTr,
+    bodyAggrTr,
     tBody,
     styleSheet,
     lineBreaksToListItems
