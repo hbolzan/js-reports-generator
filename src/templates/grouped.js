@@ -70,6 +70,7 @@ const GroupedDataTemplate = (context, settings) => {
 
 
     function render(data) {
+        console.log(settings, data);
         return ["section",
                 ["div", { class: ["report-header"] },
                  ["h2", settings.title]],

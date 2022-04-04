@@ -117,6 +117,10 @@ function prepare(rawData, dataSettings) {
     );
 }
 
+function aggregateGroups(preparedGroups, aggregators) {
+    return aggregateRows(preparedGroups.map(g => g.aggregates), aggregators);
+}
+
 export {
     groupValues,
     withGroupValues,
@@ -129,4 +133,5 @@ export {
     parseRow,
     withAttrs,
     prepare,
+    aggregateGroups,
 };
