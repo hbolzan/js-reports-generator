@@ -1,7 +1,4 @@
-if (window._ == undefined) {
-    window._ = require("lodash");
-}
-
+import _ from "lodash";
 import { pipe, boolParse } from "./misc.js";
 
 function group(rows, columns) {
