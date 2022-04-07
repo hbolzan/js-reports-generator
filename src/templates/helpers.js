@@ -12,8 +12,8 @@ const bodyCell = (cellTag, tr, value, alignment) => [
     [cellTag, { style: { textAlign: alignment || "center" } }, String(value)]
 ];
 
-const bodyTd = (tr, value, alginment) => bodyCell("td", tr, value, alginment);
-const bodyTh = (tr, value, alginment) => bodyCell("th", tr, value, alginment);
+const bodyTd = (tr, value, alignment) => bodyCell("td", tr, value, alignment);
+const bodyTh = (tr, value, alignment) => bodyCell("th", tr, value, alignment);
 
 const bodyRow = (cellFn, columns, row) => columns.reduce(
     (tr, column) => column.visible ?

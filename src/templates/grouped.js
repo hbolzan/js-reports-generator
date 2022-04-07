@@ -1,4 +1,5 @@
 import { trace, isEmpty } from "../logic/misc.js";
+import { aggregateGroups } from "../logic/data-handling.js";
 import { tHead, tBody, bodyTr, bodyAggrTr, styleSheet, lineBreaksToListItems } from "./helpers.js";
 
 // In this template, each data element is a group
@@ -20,9 +21,9 @@ function columnsHeaderRow({ columns }) {
 
 function columnFooter(aggregates, totalWidth, tr, column) {
     const p = columnWidthPercentage(totalWidth, column),
-          aggr = aggregates[column.name] || "";
+          aggr = column.displayFormat(aggregates[column.name]) || "&nbsp;";
     return column.visible ?
-        tr.concat([["tr", { style: { width: `${p}%` } }, aggr]]) :
+        tr.concat([["th", { style: { width: `${p}%`, textAlign: column.alignment() || "right" } }, aggr]]) :
         tr;
 }
 
@@ -45,9 +46,20 @@ const GroupedDataTemplate = (context, settings) => {
           columnsHeader = ["thead", columnsHeaderRow(settings.data)],
           visibleColumnsCount = settings.data.columns.reduce((sum, c) => c.visible ? sum + 1 : sum, 0);
 
-    function groupHeader({ title }) {
+    function pageFooter({ owner }) {
         return ["table", { class: ["uk-table", "uk-table-small"] },
-                ["tr", ["td", lineBreaksToListItems(title)]]];
+                ["tr",
+                 ["td",
+                  ["ul", { class: ["uk-list", "uk-list-square"], style: { listStyle: "none" } },
+                   ["li", owner.name],
+                   ["li", owner.address],
+                   ["li", `Tel.: ${ owner.name }`],
+                   ["li", `E-mail: ${ owner.email }`]]]]];
+    }
+
+    function groupHeader({ title, style={} }) {
+        return ["table", { class: ["uk-table", "uk-table-small"] },
+                ["tr", ["td", style, lineBreaksToListItems(title)]]];
     }
 
     function withGroupAggregates(group, body) {
@@ -68,20 +80,28 @@ const GroupedDataTemplate = (context, settings) => {
                  )]];
     }
 
+    function dataFooter(data) {
+        return ["section", { class: ["group-container"] },
+                groupHeader({ title: "TOTAIS", style: { style: { fontWeight: "bold" } } }),
+                ["table", { class: ["group-table", "uk-table", "uk-table-divider", "uk-table-small", "uk-table-hover"] },
+                 columnsFooter(columns, aggregateGroups(data, settings.data.aggregators))]];
+    }
 
     function render(data) {
-        console.log(settings, data);
+        console.log(settings);
         return ["section",
                 ["div", { class: ["report-header"] },
                  ["h2", settings.title]],
 
                 ["table", { class: ["uk-table", "uk-table-small"] },
                  ["thead", ["tr", ["td", ["div", { class: ["header-space"] }, "&nbsp;"]]]],
-                 ["tbody", ["tr", ["td", ["div", ...data.map(groupBody)]]]],
+                 ["tbody",
+                  ["tr", ["td", ["div", ...data.map(groupBody)]],],
+                  ["tr", ["td", ["div", dataFooter(data)]]]],
                  ["tfoot", ["tr", ["td", ["div", { class: ["footer-space"] }, "&nbsp;"]]]]],
 
                 ["div", { class: ["report-footer"] },
-                 ["h4", settings.footer || "Rodapé"]]];
+                 pageFooter(settings)]];
     }
 
     return {

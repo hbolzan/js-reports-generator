@@ -43,10 +43,9 @@ const defaultPageStyle = {
             ".empty-th {min-height: 10mm;}",
             "header {position: fixed; top: 0; height: 50mm;}",
             "footer {position: fixed; bottom: 0;}",
-            ".report-header, .report-footer, .header-space, .footer-space {height: 15mm;}",
-            ".footer-space {border: 1px solid red;}",
+            ".report-header, .report-footer, .header-space, .footer-space {height: 18mm;}",
             ".report-header {position: fixed; top: 0;}",
-            ".report-footer {position: fixed; bottom: 0;}",
+            ".report-footer {position: fixed; bottom: 5mm; left: -10mm;}",
         ]
     }
 };
