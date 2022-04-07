@@ -88,7 +88,6 @@ const GroupedDataTemplate = (context, settings) => {
     }
 
     function render(data) {
-        console.log(settings);
         return ["section",
                 ["div", { class: ["report-header"] },
                  ["h2", settings.title]],
