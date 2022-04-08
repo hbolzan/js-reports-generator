@@ -4,9 +4,13 @@ function baseAttrs(id, name) {
     return { id, name, class: ["uk-input"]};
 }
 
+const inputFns = {
+    DEFAULT_CFOP_CODES: () => "5101,5102,6101,6102,6108,6119",
+};
+
 function textInput({ uuidGen }, param) {
-    const suggestion = param?.suggestion?.from;
-    return ["input", assocIf({ ...baseAttrs(uuidGen(), param.name.from), }, "value", suggestion)];
+    const fn = inputFns[param?.suggestion?.from];
+    return ["input", assocIf({ ...baseAttrs(uuidGen(), param.name.from), }, "value", fn ? fn() : null)];
 }
 
 function typeIsInt(paramType) {
@@ -154,7 +158,11 @@ function dlgField(context, param) {
 function reportParamsForm(context, reportSettings, buttonClick) {
     const params = reportSettings.dialogParams;
 
-    return ["div", { class: ["uk-card", "uk-card-default", "uk-card-hover", "uk-card-body", "uk-width-2-3"]},
+    return ["div", {
+        class: ["uk-card-default", "uk-card", "uk-card-default", "uk-card-hover", "uk-card-body", "uk-width-2-3"],
+        style: { zIndex: "980"},
+        ukSticky: "offset: 100",
+    },
             ["h3", { class: ["uk-card-title"] }, reportSettings.settings.title],
             ["form", { class: ["uk-form-stacked"] },
              ...params.map(param => dlgField(context, param))],

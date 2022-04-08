@@ -15,6 +15,21 @@
              bottom: 20px;
          }
 
+         .sidebar-container {
+             height: 100%;
+             position: fixed;
+             padding: 0px;
+             margin-top: -50px;
+             padding-top: 50px;
+             border-right: 1px solid #ddd;
+         }
+
+         .sidebar {
+             height: 100%;
+             position: relative;
+             overflow-y: scroll;
+         }
+
          .report-pane {
              position: absolute;
              top: 0;
@@ -22,6 +37,10 @@
              bottom: 90px;
              left: 0;
              border-bottom: 1px solid #e5e5e5;
+         }
+
+         .top-bar {
+             background-color: green!important;
          }
 
          #button-container {
@@ -35,16 +54,24 @@
     </head>
 
     <body>
-        <div id="page-header" class="uk-navbar uk-background-primary" data-uk-sticky style="height: 80px">
+        <div id="page-header" class="uk-navbar uk-background-primary top-bar" data-uk-sticky style="height: 80px">
             <div id="button-container">
-                <button id="auth-sign-out" class="uk-background-primary uk-button uk-button-default uk-button-large">SAIR</button>
+                <button id="auth-sign-out" class="uk-margin-small-top uk-button uk-button-danger uk-button-large">
+                    <span class="uk-icon" uk-icon="sign-out"></span> SAIR
+                </button>
             </div>
         </div>
 
         <div class="uk-container-expand uk-height-1-1">
             <div class="uk-grid uk-grid-collapse" uk-height-viewport="expand: true">
-                <div id="index-body" class="uk-background-muted uk-width-1-4 uk-padding"></div>
-                <div id="dialog-body" class="uk-width-3-4 uk-padding"></div>
+                <div class="uk-background-muted uk-width-1-4 uk-padding-small uk-padding-remove-right sidebar-container">
+                    <div id="index-body" class="sidebar"></div>
+                </div>
+                <div class="uk-width-1-4 uk-padding"></div>
+                <ul class="uk-width-3-4 uk-padding uk-switcher switcher-body-container">
+                    <li><div id="dialog-body"></div></li>
+                    <li><div id="features-body"></div></li>
+                </ul>
             </div>
         </div>
 
