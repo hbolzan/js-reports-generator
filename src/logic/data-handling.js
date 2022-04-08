@@ -1,7 +1,4 @@
-if (window._ == undefined) {
-    window._ = require("lodash");
-}
-
+import _ from "lodash";
 import { pipe, boolParse } from "./misc.js";
 
 function group(rows, columns) {
@@ -59,9 +56,8 @@ function coerceDate(value, { viewType }) {
     return dateStr;
 }
 
-function coerceNumber(value) {
-    const n = Number(value.replaceAll(",", "."));
-    return isNaN(n) ? "" : n;
+function coerceNumber(value, column) {
+    return Number(value.replaceAll(",", "."));
 }
 
 function coerce(value, column) {
@@ -73,7 +69,7 @@ function coerce(value, column) {
         return boolParse(value);
     }
     if (dataType === Number && typeof(value) === "string") {
-        return coerceNumber(value);
+        return coerceNumber(value, column);
     }
     if (dataType === Date) {
         return coerceDate(value, column);
@@ -118,6 +114,10 @@ function prepare(rawData, dataSettings) {
     );
 }
 
+function aggregateGroups(preparedGroups, aggregators) {
+    return aggregateRows(preparedGroups.map(g => g.aggregates), aggregators);
+}
+
 export {
     groupValues,
     withGroupValues,
@@ -130,4 +130,5 @@ export {
     parseRow,
     withAttrs,
     prepare,
+    aggregateGroups,
 };

@@ -7,8 +7,12 @@ function withGroupDelimiter(s) {
 }
 
 const decimalPlaces = format => (format.split(".").slice(1, 2)[0] || "").length;
+const formatInteger = n => ( isNaN(n) || n === "" ) ? "" : Math.trunc(n).toFixed(0);
 
 function formatFloat(n, format) {
+    if ( isNaN(n) || n === "" ) {
+        return "";
+    }
     const intN = Math.trunc(n),
           digits = decimalPlaces(format);
     return withGroupDelimiter(intN.toFixed(0)) +
@@ -16,6 +20,6 @@ function formatFloat(n, format) {
         (Math.round(((n-intN)*(10**digits))).toFixed(0).padEnd(digits, "0"));
 }
 
-const formatDate = d => d.split("-").reverse().join("/");
+const formatDate = d => d?.split("-")?.reverse()?.join("/");
 
-export { formatFloat, formatDate };
+export { formatInteger, formatFloat, formatDate };

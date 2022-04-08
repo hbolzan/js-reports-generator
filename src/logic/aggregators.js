@@ -1,4 +1,8 @@
-const sum = (column, rows) => rows.reduce((total, row) => total + Number(row[column.name]), 0);
+function sumReducer(column, total, row) {
+    const n = Number(row[column.name]);
+    return isNaN(n) ? total : total + n;
+}
+const sum = (column, rows) => rows.reduce((total, row) => sumReducer(column, total, row), 0);
 const concat = glue => (column, rows) => rows.reduce(
     (result, row) =>  result + (result !== "" ? glue : "") + String(row[column.name]),
     ""

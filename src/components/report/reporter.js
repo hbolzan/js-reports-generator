@@ -4,7 +4,7 @@ import { prepare } from "../../logic/data-handling.js";
 import { constantly } from "../../logic/misc.js";
 
 function Template(context, settings) {
-    return (context.templates[settings.templateName] || context.templates.MiniPCPTemplate)(context, settings);
+    return (context.templates[settings.templateName] || context.templates.Default)(context, settings);
 }
 
 function Reporter(context, { settings }) {

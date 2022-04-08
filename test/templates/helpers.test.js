@@ -82,8 +82,8 @@ describe("bodyTd", () => {
 describe("bodyTr", () => {
     test("returns tr correponding to row", () => {
         const columns = [
-            { name: "b", visible: true, alignment: () => "center" },
-            { name: "a", visible: true, alignment: () => "left"  }
+            { name: "b", visible: true, alignment: () => "center", displayFormat: x => x },
+            { name: "a", visible: true, alignment: () => "left", displayFormat: x => x   }
         ],
               row = { a: "AA", b: "BB" };
         expect(bodyTr(columns, row))
@@ -97,8 +97,8 @@ describe("tBody", () => {
     test("returns table tbody with rows", () => {
         const data = {
             columns: [
-                { name: "b", visible: true, alignment: () => "center" },
-                { name: "a", visible: true, alignment: () => "center" },
+                { name: "b", visible: true, alignment: () => "center", displayFormat: x => x  },
+                { name: "a", visible: true, alignment: () => "center", displayFormat: x => x  },
             ],
             rows: [
                 { a: "A1", b: "B1" },

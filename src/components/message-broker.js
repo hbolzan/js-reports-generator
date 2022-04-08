@@ -10,7 +10,7 @@ function MessageBroker() {
     }
 
     function produce(topic, message) {
-        newOrExistingTopic(topic).map(handler => handler(message));
+        newOrExistingTopic(topic).forEach(handler => setTimeout(() => handler(message), 0));
     }
 
     return {

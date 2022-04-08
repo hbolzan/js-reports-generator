@@ -11,10 +11,58 @@ import {
     parseRow,
     withAttrs,
     prepare,
+    aggregateGroups,
 } from "../../src/logic/data-handling.js";
 import { sum, avg, concat } from "../../src/logic/aggregators.js";
 import { constantly } from "../../src/logic/misc.js";
 
+const preparedGroups = [
+    {
+        title: "Group a+b",
+        groupValues: { a: "a", b: "b" },
+        rows: [
+            { a: "a", b: "b", c: "c", d: "d", f: 1, x: 2 },
+            { a: "a", b: "b", c: "c", d: "d", f: 2, x: 4 },
+            { a: "a", b: "b", c: "d", d: "d", f: 6, x: 12 },
+            { a: "a", b: "b", c: "d", d: "e", f: 3, x: 6 },
+            { a: "a", b: "b", c: "d", d: "f", f: 1, x: 2 },
+        ],
+        aggregates: { d: "d/d/d/e/f", f: 13, x: 5.2 },
+    },
+
+    {
+        title: "Group a+c",
+        groupValues: { a: "a", b: "c" },
+        rows: [
+            { a: "a", b: "c", c: "a", d: "b", f: 9, x: 18 },
+            { a: "a", b: "c", c: "a", d: "c", f: 4, x: 8 },
+        ],
+        aggregates: { d: "b/c", f: 13, x: 13 },
+    },
+
+    {
+        title: "Group b+d",
+        groupValues: { a: "b", b: "d" },
+        rows: [
+            { a: "b", b: "d", c: "a", d: "c", f: 5, x: 10 },
+            { a: "b", b: "d", c: "b", d: "b", f: 8, x: 16 },
+            { a: "b", b: "d", c: "c", d: "b", f: 7, x: 14 },
+            { a: "b", b: "d", c: "d", d: "d", f: 0, x: 0 },
+        ],
+        aggregates: { d: "c/b/b/d", f: 20, x: 10 },
+    },
+
+];
+
+const columnA = Column.parse({ name: "a" }),
+      columnB = Column.parse({ name: "b" }),
+      columnC = Column.parse({ name: "c" }),
+      columnD = Column.parse({ name: "d" }),
+      columnF = Column.parse({ name: "f", dataType: Number }),
+      columnX = Column.parse({ name: "x", dataType: Number, value: row => 2*row.f }),
+      aggrSumF = Aggregator.parse({ column: columnF, compute: sum }),
+      aggrAvgX = Aggregator.parse({ column: columnX, compute: avg }),
+      aggrConcatD = Aggregator.parse({ column: columnD, compute: concat("/") });
 
 const groupSettings = Grouping.parse({
     columns: [Column.parse({ name: "a" }), Column.parse({ name: "b" })]
@@ -241,53 +289,7 @@ describe("prepare", () => {
         { a: "a", b: "b", c: "c", d: "d", f: 1 },
     ];
 
-    const groups = [
-        {
-            title: "Group a+b",
-            groupValues: { a: "a", b: "b" },
-            rows: [
-                { a: "a", b: "b", c: "c", d: "d", f: 1, x: 2 },
-                { a: "a", b: "b", c: "c", d: "d", f: 2, x: 4 },
-                { a: "a", b: "b", c: "d", d: "d", f: 6, x: 12 },
-                { a: "a", b: "b", c: "d", d: "e", f: 3, x: 6 },
-                { a: "a", b: "b", c: "d", d: "f", f: 1, x: 2 },
-            ],
-            aggregates: { d: "d/d/d/e/f", f: 13, x: 5.2 },
-        },
-
-        {
-            title: "Group a+c",
-            groupValues: { a: "a", b: "c" },
-            rows: [
-                { a: "a", b: "c", c: "a", d: "b", f: 9, x: 18 },
-                { a: "a", b: "c", c: "a", d: "c", f: 4, x: 8 },
-            ],
-            aggregates: { d: "b/c", f: 13, x: 13 },
-        },
-
-        {
-            title: "Group b+d",
-            groupValues: { a: "b", b: "d" },
-            rows: [
-                { a: "b", b: "d", c: "a", d: "c", f: 5, x: 10 },
-                { a: "b", b: "d", c: "b", d: "b", f: 8, x: 16 },
-                { a: "b", b: "d", c: "c", d: "b", f: 7, x: 14 },
-                { a: "b", b: "d", c: "d", d: "d", f: 0, x: 0 },
-            ],
-            aggregates: { d: "c/b/b/d", f: 20, x: 10 },
-        },
-
-    ];
-
-    const columnA = Column.parse({ name: "a" }),
-          columnB = Column.parse({ name: "b" }),
-          columnC = Column.parse({ name: "c" }),
-          columnD = Column.parse({ name: "d" }),
-          columnF = Column.parse({ name: "f", dataType: Number }),
-          columnX = Column.parse({ name: "x", dataType: Number, value: row => 2*row.f }),
-          aggrSumF = Aggregator.parse({ column: columnF, compute: sum }),
-          aggrAvgX = Aggregator.parse({ column: columnX, compute: avg }),
-          aggrConcatD = Aggregator.parse({ column: columnD, compute: concat("/") });
+    const groups = preparedGroups;
 
     const dataSettings = {
         columns: [columnA, columnB, columnC, columnD, columnF, columnX],
@@ -301,5 +303,14 @@ describe("prepare", () => {
 
     it("converts raw data into groups list", () => {
         expect(prepare(rawData, dataSettings)).toEqual(groups);
+    });
+});
+
+describe("aggregateGroups", () => {
+    const aggregators = [aggrConcatD, aggrSumF, aggrAvgX];
+
+    it("aggreates groups aggregates using the compute methods of each aggregator", () => {
+        expect(aggregateGroups(preparedGroups, aggregators))
+            .toEqual({ d: "d/d/d/e/f/b/c/c/b/b/d", f: 46, x: 9.4 });
     });
 });

@@ -24,7 +24,6 @@ const datePickerFormatter = (input, date, instance) => {
 };
 
 function datePickerOptions(suggestion) {
-    console.log(suggestion);
     return assocIf({
         formatter: datePickerFormatter,
         position: "br",
