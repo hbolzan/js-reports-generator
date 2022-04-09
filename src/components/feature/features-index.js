@@ -1,13 +1,12 @@
-function itemClick(context, reportId) {
-    context.ReportParams(context, reportId)
-        .get()
-        .then(p => context.ReportDialog(context, p).show());
+async function itemClick(context, featureId) {
+    const feature = await context.feature.get(featureId);
+    console.log(feature);
 }
 
 function FeaturesIndex(context) {
-    const { config, views, httpClient, Dom } = context,
+    const { config, api, views, httpClient, Dom } = context,
           fetchOptions = { mode: "cors", errorMessage: "ATENÇÃO: O índice de funcionalidades não está disponível" },
-          featuresUrl = config.apiUrl("features");
+          featuresUrl = config.apiUrl(api.features);
 
     function index() {
         return httpClient.GET(featuresUrl, fetchOptions)

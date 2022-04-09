@@ -27,7 +27,6 @@ const groupItem = (context, items, title, onClick) => ["li", { class: ["uk-paren
       };
 
 function tabs(context, { reports, features }) {
-    console.log(reports);
     return ["section",
             ["ul", { class: ["uk-subnav", "uk-subnav-pill"], private: { initSwitcher } },
              ["li", { class: ["uk-active"]},

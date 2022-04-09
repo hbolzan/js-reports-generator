@@ -19,6 +19,7 @@ import ReportsIndex from "./components/report/reports-index.js";
 import ReportParams from "./components/report/report-params.js";
 import ReportDialog from "./components/report/report-dialog.js";
 import FeaturesIndex from "./components/feature/features-index.js";
+import Feature from "./components/feature/feature.js";
 import MainIndex from "./components/page/main-index.js";
 import Page from "./components/page/page.js";
 import SimpleTemplate from "./templates/simple.js";
@@ -80,17 +81,24 @@ const _ = require("lodash"),
           MainIndex,
       },
 
+      auth = Auth(independentContext),
       baseContext = {
           ...independentContext,
-          auth: Auth(independentContext),
+          auth,
       },
 
-      httpClient = HttpClient(baseContext),
+      fullContext = {
+          ...baseContext,
+          httpClient: HttpClient(baseContext),
+          authDialog: AuthDialog(baseContext),
+      },
+
+      feature = Feature(fullContext),
 
       context = {
-          httpClient,
-          authDialog: AuthDialog(baseContext),
-          page: Page({ ...baseContext, httpClient }),
+          ...fullContext,
+          feature,
+          page: Page({ ...fullContext, feature }),
       };
 
 export default context;

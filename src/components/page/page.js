@@ -12,7 +12,7 @@ function Page(baseContext) {
     function renderIndex() {
         MainIndex(context)
             .index()
-            .then(dom => dom.render(renderNodes.reportsIndex));
+            .then(dom => dom.render(renderNodes.mainIndex));
     }
 
     function setReportContainerVisible(state) {

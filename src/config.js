@@ -14,11 +14,15 @@ function Config({ _, templates }) {
             authBaseUrl: "/auth",
             authSignIn: "sign-in",
             authRefresh: "refresh",
+            reports: "reports",
+            features: "features",
+            reportParams: reportId => `reports/${ reportId }/params`,
+            feature: featureId => `features/${ featureId }`,
         },
 
         renderNodes: {
             dialog: "dialog-body",
-            reportsIndex: "index-body",
+            mainIndex: "index-body",
             pageHeader: "page-header",
             reportContainer: "report-container",
             reportIFrame: "report-iframe",
