@@ -18,9 +18,12 @@ import Reporter from "./components/report/reporter.js";
 import ReportsIndex from "./components/report/reports-index.js";
 import ReportParams from "./components/report/report-params.js";
 import ReportDialog from "./components/report/report-dialog.js";
+import FeaturesIndex from "./components/feature/features-index.js";
+import MainIndex from "./components/page/main-index.js";
 import Page from "./components/page/page.js";
 import SimpleTemplate from "./templates/simple.js";
 import GroupdDataTemplate from "./templates/grouped.js";
+import commonViews from "./views/common/index.js";
 
 UIkit.use(Icons);
 
@@ -36,6 +39,11 @@ const _ = require("lodash"),
           GroupdDataTemplate,
           Default: GroupdDataTemplate,
       },
+
+      views = {
+          commonViews,
+      },
+
       config = Config({ _, templates }),
 
       independentContext = {
@@ -56,6 +64,7 @@ const _ = require("lodash"),
           topics: config.topics,
           renderNodes: config.renderNodes,
           templates,
+          views,
           api: config.api,
 
           messageBroker,
@@ -65,6 +74,10 @@ const _ = require("lodash"),
           ReportParams,
           ReportDialog,
           Reporter,
+
+          FeaturesIndex,
+
+          MainIndex,
       },
 
       baseContext = {

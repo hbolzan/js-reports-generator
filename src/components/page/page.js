@@ -1,5 +1,5 @@
 function Page(baseContext) {
-    const { UIkit, document, renderNodes, messageBroker, topics, ReportsIndex } = baseContext,
+    const { UIkit, document, renderNodes, messageBroker, topics, MainIndex, ReportsIndex } = baseContext,
           self = {
               init,
               renderIndex,
@@ -10,7 +10,7 @@ function Page(baseContext) {
           context = { ...baseContext, page: self };
 
     function renderIndex() {
-        ReportsIndex(context)
+        MainIndex(context)
             .index()
             .then(dom => dom.render(renderNodes.reportsIndex));
     }
