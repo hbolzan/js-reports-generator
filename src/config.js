@@ -27,6 +27,7 @@ function Config({ _, templates }) {
             reportContainer: "report-container",
             reportIFrame: "report-iframe",
             reportBody: "report-body",
+            featuresBody: "features-body",
             reportCloseButton: "report-close-button",
             reportPrintButton: "report-print-button",
         },

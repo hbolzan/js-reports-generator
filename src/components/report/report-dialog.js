@@ -6,12 +6,6 @@ let dialogs = {},
     doms = {},
     rendered;
 
-function dialogElement(context, dom, dialogParams) {
-    const el = context.document.createElement("template");
-    el.innerHtml = dom.asHtml;
-    return el.content.firstElementChild;
-}
-
 function removeRendered(dialogNode) {
     if ( rendered ) {
         dialogNode.removeChild(rendered);

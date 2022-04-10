@@ -1,4 +1,4 @@
-function Feature(context) {
+function Features(context) {
 
     const cachedFeatures = {},
           { httpClient, config, api } = context,
@@ -7,23 +7,23 @@ function Feature(context) {
               errorMessage: "ATENÇÃO: A funcionalidade selecionada não está disponível"
           };
 
-    async function fetchFeature(featureId) {
+    async function fetch(featureId) {
         const featureUrl = config.apiUrl(api.feature(featureId));
         return await httpClient.GET(featureUrl, fetchOptions);
     }
 
-    async function feature(featureId) {
+    async function _get(featureId) {
         if ( ! cachedFeatures[featureId] ) {
-            const response = await fetchFeature(featureId);
+            const response = await fetch(featureId);
             cachedFeatures[featureId] = response.json();
         }
         return cachedFeatures[featureId];
     }
 
     return {
-        get: feature,
+        get: _get,
     };
 
 }
 
-export default Feature;
+export default Features;

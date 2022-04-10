@@ -1,5 +1,5 @@
 async function itemClick(context, featureId) {
-    const feature = await context.feature.get(featureId);
+    const feature = await context.features.get(featureId);
     console.log(feature);
 }
 
