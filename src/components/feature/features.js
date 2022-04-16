@@ -16,12 +16,15 @@ async function Feature(context, featureId) {
               rendered: {},
           };
 
+    function setData(key, value) {
+        state.data = Object.assign({}, { ...(state.data || {}), [key]: value });
+    }
+
     async function fetch() {
         const featureUrl = config.apiUrl(api.feature(featureId)),
               feature = await httpClient.GET(featureUrl, fetchOptions);
         return feature.json();
     }
-
 
     function show(requiredViewOrder) {
         const viewOrder = requiredViewOrder ?? state.activeViewOrder ?? 0;
@@ -49,6 +52,15 @@ async function Feature(context, featureId) {
         }
     }
 
+    const navActions = {
+        next: showNextView,
+        prior: showPriorView,
+    };
+
+    function nav(actionArgs) {
+        navActions[actionArgs.navType]();
+    }
+
     async function init() {
         state.definition = await fetch();
         messageBroker.listen(topics.AUTH__SIGNED_OUT, () => state?.active?.hide());
@@ -58,9 +70,11 @@ async function Feature(context, featureId) {
     self = {
         state,
         show,
+        nav,
         showNextView,
         showPriorView,
         hide: () => state?.active?.hide(),
+        setData,
     };
 
     return self;

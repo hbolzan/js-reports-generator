@@ -1,26 +1,13 @@
-function ActionsFactory({ UIkit }) {
-    const actions = {
-        alert: (data, feature) => () => UIkit.modal.alert(data.message),
-        next: (data, feature) => () => feature.showNextView(),
-        prior: (data, feature) => () => feature.showPriorView(),
-    };
-
-    return {
-        new: (type, data, feature) => actions[type](data, feature),
-    };
-}
-
 function View(context, { id, hiccup, actions }, feature) {
-    const { Dom, document, messageBroker, topics } = context,
+    const { Dom, document, messageBroker, topics, actionsFactory } = context,
           dom = Dom(context, hiccup),
-          actionsFactory = ActionsFactory(context),
           node = document.getElementById(context.renderNodes.featuresBody),
           rendered = dom.appendToDomNode(node),
           state = { visible: true };
 
-    function setAction({ elementId, type, event, data }) {
+    function setAction({ elementId, type, event, args }) {
         const element = document.getElementById(elementId);
-        element[event] = actionsFactory.new(type, data, feature);
+        element[event] = actionsFactory.new(type, args, feature);
     }
 
     function setActions() {

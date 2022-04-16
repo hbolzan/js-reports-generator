@@ -20,6 +20,7 @@ import ReportParams from "./components/report/report-params.js";
 import ReportDialog from "./components/report/report-dialog.js";
 import FeaturesIndex from "./components/feature/features-index.js";
 import Features from "./components/feature/features.js";
+import ActionsFactory from "./components/feature/actions-factory.js";
 import MainIndex from "./components/page/main-index.js";
 import Page from "./components/page/page.js";
 import SimpleTemplate from "./templates/simple.js";
@@ -93,7 +94,8 @@ const _ = require("lodash"),
           authDialog: AuthDialog(baseContext),
       },
 
-      features = Features(fullContext),
+      actionsFactory = ActionsFactory(baseContext),
+      features = Features({ ...fullContext, actionsFactory }),
 
       context = {
           ...fullContext,
