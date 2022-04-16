@@ -3,23 +3,41 @@ const fetchOptions = {
     errorMessage: "ATENÇÃO: A funcionalidade selecionada não está disponível"
 };
 
+function View(context, hiccup) {
+    const dom = context.Dom(context, hiccup),
+          node = context.document.getElementById(context.renderNodes.featuresBody),
+          rendered = dom.appendToDomNode(node),
+          state = { visible: true, };
+
+    function show() {
+        if ( ! state.visible ) {
+            node.appendChild(rendered);
+            state.visible = true;
+        }
+    }
+
+    function hide() {
+        if ( state.visible ) {
+            node.removeChild(rendered);
+            state.visible = false;
+        }
+    }
+
+    return {
+        show,
+        hide,
+    };
+}
+
 async function Feature(context, featureId) {
     const { httpClient, config, api, Dom } = context,
           node = context.document.getElementById(context.renderNodes.featuresBody),
           state = {
               definition: null,
-              doms: {},
+              views: {},
               active: null,
               rendered: {},
           };
-
-    function removeActive() {
-        if ( state.active ) {
-            node.removeChild(state.active);
-            state.active = null;
-            state.activeViewId = null;
-        }
-    }
 
     async function fetch() {
         const featureUrl = config.apiUrl(api.feature(featureId)),
@@ -29,29 +47,22 @@ async function Feature(context, featureId) {
 
     state.definition = await fetch();
 
-    function render(viewId) {
-        if ( ! state.doms[viewId] ) {
-            state.doms[viewId] = Dom(context, state.definition.views[viewId]);
-        }
-    }
-
     function show(requiredViewId) {
         const viewId = requiredViewId || state.activeViewId || 0;
-        removeActive();
-        render(viewId);
-        if ( ! state.rendered[viewId] ) {
-            state.rendered[viewId] = state.doms[viewId].appendToDomNode(node);
-        } else {
-            node.appendChild(state.rendered[viewId]);
+        state?.active?.hide();
+
+        if ( ! state.views[viewId] ) {
+            state.views[viewId] = View(context, state.definition.views[viewId]);
         }
-        state.active = state.rendered[viewId];
         state.activeViewId = viewId;
+        state.active = state.views[viewId];
+        state.active.show();
     }
 
     return {
         state,
         show,
-        hide: removeActive,
+        hide: () => state?.active?.hide(),
     };
 }
 
