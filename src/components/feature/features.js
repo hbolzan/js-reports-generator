@@ -6,7 +6,8 @@ const fetchOptions = {
 };
 
 async function Feature(context, featureId) {
-    const { httpClient, config, api, Dom } = context,
+    let self;
+    const { _, httpClient, config, api, Dom, messageBroker, topics } = context,
           node = context.document.getElementById(context.renderNodes.featuresBody),
           state = {
               definition: null,
@@ -21,25 +22,48 @@ async function Feature(context, featureId) {
         return feature.json();
     }
 
-    state.definition = await fetch();
 
-    function show(requiredViewId) {
-        const viewId = requiredViewId || state.activeViewId || 0;
+    function show(requiredViewOrder) {
+        const viewOrder = requiredViewOrder ?? state.activeViewOrder ?? 0;
         state?.active?.hide();
 
-        if ( ! state.views[viewId] ) {
-            state.views[viewId] = View(context, state.definition.views[viewId]);
+        if ( ! state.views[viewOrder] ) {
+            state.views[viewOrder] = View(context, state.definition.views[viewOrder], self);
         }
-        state.activeViewId = viewId;
-        state.active = state.views[viewId];
+        state.activeViewOrder = viewOrder;
+        state.active = state.views[viewOrder];
         state.active.show();
     }
 
-    return {
+    function showNextView() {
+        const nextOrder = (state.activeViewOrder ?? -1) + 1;
+        if ( nextOrder < state.definition.views.length ) {
+            show(nextOrder);
+        }
+    }
+
+    function showPriorView() {
+        const priorOrder = (state.activeViewOrder ?? 0) - 1;
+        if ( priorOrder >= 0 ) {
+            show(priorOrder);
+        }
+    }
+
+    async function init() {
+        state.definition = await fetch();
+        messageBroker.listen(topics.AUTH__SIGNED_OUT, () => state?.active?.hide());
+    }
+    await init();
+
+    self = {
         state,
         show,
+        showNextView,
+        showPriorView,
         hide: () => state?.active?.hide(),
     };
+
+    return self;
 }
 
 function Features(context) {

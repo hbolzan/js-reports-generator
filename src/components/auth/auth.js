@@ -62,6 +62,7 @@ function Auth(context) {
         data.auth = {};
         saveAuthData(data);
         refresh();
+        messageBroker.produce(topics.AUTH__SIGNED_OUT, {});
     }
 
     function refreshWhileYouCan(data) {
