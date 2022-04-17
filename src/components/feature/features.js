@@ -75,6 +75,7 @@ async function Feature(context, featureId) {
         showPriorView,
         hide: () => state?.active?.hide(),
         setData,
+        getData: k => (state?.data || {})[k],
     };
 
     return self;

@@ -1,13 +1,16 @@
-function View(context, { id, hiccup, actions }, feature) {
-    const { Dom, document, messageBroker, topics, actionsFactory } = context,
+function View(context, view, feature) {
+    const { _, Dom, document, messageBroker, topics, actionsFactory } = context,
+          { id, hiccup, actions, events } = view,
           dom = Dom(context, hiccup),
           node = document.getElementById(context.renderNodes.featuresBody),
           rendered = dom.appendToDomNode(node),
           state = { visible: true };
 
-    function setAction({ elementId, type, event, args }) {
-        const element = document.getElementById(elementId);
-        element[event] = actionsFactory.new(type, args, feature);
+    let self;
+
+    function setAction(action) {
+        const element = document.getElementById(action.elementId);
+        (element || {})[action.event] = actionsFactory.new(action, self, feature);
     }
 
     function setActions() {
@@ -19,6 +22,7 @@ function View(context, { id, hiccup, actions }, feature) {
             node.appendChild(rendered);
             state.visible = true;
         }
+        messageBroker.produce(`view-${ id }-show`, state);
     }
 
     function hide() {
@@ -28,21 +32,26 @@ function View(context, { id, hiccup, actions }, feature) {
         }
     }
 
-    function setContent(parentId, content) {
+    function setContent(parentId, _content) {
+        const content = _.isArray(_content) ? _content : ["span", _content];
         const dom = context.Dom(context, content);
         return dom.render(parentId);
     }
 
     function init() {
         setActions();
+        show();
     }
-    init();
 
-    return {
+    self = {
+        id,
         show,
         hide,
         setContent,
     };
+
+    init();
+    return self;
 }
 
 export default View;
