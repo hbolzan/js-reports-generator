@@ -20,6 +20,10 @@ async function Feature(context, featureId) {
         state.data = Object.assign({}, { ...(state.data || {}), [key]: value });
     }
 
+    function mergeData(data) {
+        state.data = Object.assign({}, { ...(state.data || {}), ...data });
+    }
+
     async function fetch() {
         const featureUrl = config.apiUrl(api.feature(featureId)),
               feature = await httpClient.GET(featureUrl, fetchOptions);
@@ -75,6 +79,7 @@ async function Feature(context, featureId) {
         showPriorView,
         hide: () => state?.active?.hide(),
         setData,
+        mergeData,
         getData: k => (state?.data || {})[k],
     };
 

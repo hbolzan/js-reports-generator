@@ -16,8 +16,11 @@ function Config({ _, templates }) {
             authRefresh: "refresh",
             reports: "reports",
             features: "features",
+            actions: "actions",
             reportParams: reportId => `reports/${ reportId }/params`,
             feature: featureId => `features/${ featureId }`,
+            actionGet: (actionId, param) => `actions/${ actionId }/${ param }`,
+            actionPerform: (actionId, param) => `actions/${ actionId }`,
         },
 
         renderNodes: {

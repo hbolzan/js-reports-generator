@@ -94,7 +94,7 @@ const _ = require("lodash"),
           authDialog: AuthDialog(baseContext),
       },
 
-      actionsFactory = ActionsFactory(baseContext),
+      actionsFactory = ActionsFactory(fullContext),
       features = Features({ ...fullContext, actionsFactory }),
 
       context = {

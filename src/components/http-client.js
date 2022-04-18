@@ -44,11 +44,15 @@ function HttpClient(context) {
     }
 
     const GET = _.partial(request, "GET"),
-          POST = _.partial(request, "POST");
+          POST = _.partial(request, "POST"),
+          PUT = _.partial(request, "PUT"),
+          DELETE = _.partial(request, "DELETE");
 
     return {
         GET,
         POST,
+        PUT,
+        DELETE,
     };
 }
 
