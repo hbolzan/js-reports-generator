@@ -1,4 +1,6 @@
-const fetchOptions = {
+import { isEmpty } from "../../logic/misc.js";
+
+const baseOptions = {
     mode: "cors",
 };
 
@@ -22,19 +24,40 @@ function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBr
         gather?.forEach(g => feature.setData(g.into, document.getElementById(g.from).value));
     }
 
-    async function fetchGet(fetch, feature) {
-        const response = await httpClient[fetch.method](
-            config.apiUrl(api.actionGet(fetch.from, feature.getData(fetch.withPath))),
-            fetchOptions
+    function fetchUrl(fetch, feature) {
+        return config.apiUrl(
+            fetch.method === "GET" ?
+                api.actionGet(fetch.from, feature.getData(fetch.withPath)) :
+                api.actionPerform(fetch.from)
         );
+    }
+
+    function fetchOptions(fetch, body) {
+        return ( _.isEmpty(body) || fetch.method === "GET" ) ?
+            baseOptions :
+            { ...baseOptions, body };
+    }
+
+    async function fetchPerform(fetch, feature) {
+        const body = fetch.withBody?.reduce((b, k) => ({ ...b, [k]: feature.getData(k) }), {}),
+              response = await httpClient[fetch.method](
+                  fetchUrl(fetch, feature),
+                  fetchOptions(fetch, body)
+              );
         return response.json();
     }
 
     async function fetchAll({ fetch }, feature) {
-        return fetch?.reduce(async (result, f) => {
-            const content = await fetchGet(f, feature);
-            return Object.assign({ ...result, [f.into]: content });
-        }, {});
+        if ( ! fetch ) {
+            return {};
+        }
+        let content;
+        const result = { data: {} };
+        for (const f of fetch) {
+            content = await fetchPerform(f, feature);
+            result.data = { ...result.data, [f.into]: content };
+        }
+        return result.data;
     }
 
     function setListener(args, feature, view) {
@@ -48,7 +71,8 @@ function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBr
               mainAction = actions[type](args, feature, view);
         return  async () => {
             gatherInputs(args, feature);
-            feature.mergeData(await fetchAll(args, feature));
+            const data = await fetchAll(args, feature);
+            feature.mergeData(data);
             mainAction();
         };
     }

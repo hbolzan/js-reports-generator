@@ -17,11 +17,11 @@ async function Feature(context, featureId) {
           };
 
     function setData(key, value) {
-        state.data = Object.assign({}, { ...(state.data || {}), [key]: value });
+        state.data = { ...(state.data || {}), [key]: value };
     }
 
     function mergeData(data) {
-        state.data = Object.assign({}, { ...(state.data || {}), ...data });
+        state.data = { ...(state.data || {}), ...data };
     }
 
     async function fetch() {

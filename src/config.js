@@ -20,7 +20,7 @@ function Config({ _, templates }) {
             reportParams: reportId => `reports/${ reportId }/params`,
             feature: featureId => `features/${ featureId }`,
             actionGet: (actionId, param) => `actions/${ actionId }/${ param }`,
-            actionPerform: (actionId, param) => `actions/${ actionId }`,
+            actionPerform: (actionId) => `actions/${ actionId }`,
         },
 
         renderNodes: {
