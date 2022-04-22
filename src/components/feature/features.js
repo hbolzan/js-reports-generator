@@ -80,7 +80,7 @@ async function Feature(context, featureId) {
         hide: () => state?.active?.hide(),
         setData,
         mergeData,
-        getData: k => (state?.data || {})[k],
+        getData: k => _.get((state?.data || {}), k),
     };
 
     return self;
