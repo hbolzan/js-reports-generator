@@ -18,9 +18,14 @@ import Reporter from "./components/report/reporter.js";
 import ReportsIndex from "./components/report/reports-index.js";
 import ReportParams from "./components/report/report-params.js";
 import ReportDialog from "./components/report/report-dialog.js";
+import FeaturesIndex from "./components/feature/features-index.js";
+import Features from "./components/feature/features.js";
+import ActionsFactory from "./components/feature/actions-factory.js";
+import MainIndex from "./components/page/main-index.js";
 import Page from "./components/page/page.js";
 import SimpleTemplate from "./templates/simple.js";
 import GroupdDataTemplate from "./templates/grouped.js";
+import commonViews from "./views/common/index.js";
 
 UIkit.use(Icons);
 
@@ -36,6 +41,11 @@ const _ = require("lodash"),
           GroupdDataTemplate,
           Default: GroupdDataTemplate,
       },
+
+      views = {
+          commonViews,
+      },
+
       config = Config({ _, templates }),
 
       independentContext = {
@@ -56,6 +66,7 @@ const _ = require("lodash"),
           topics: config.topics,
           renderNodes: config.renderNodes,
           templates,
+          views,
           api: config.api,
 
           messageBroker,
@@ -65,19 +76,31 @@ const _ = require("lodash"),
           ReportParams,
           ReportDialog,
           Reporter,
+
+          FeaturesIndex,
+
+          MainIndex,
       },
 
+      auth = Auth(independentContext),
       baseContext = {
           ...independentContext,
-          auth: Auth(independentContext),
+          auth,
       },
 
-      httpClient = HttpClient(baseContext),
+      fullContext = {
+          ...baseContext,
+          httpClient: HttpClient(baseContext),
+          authDialog: AuthDialog(baseContext),
+      },
+
+      actionsFactory = ActionsFactory(fullContext),
+      features = Features({ ...fullContext, actionsFactory }),
 
       context = {
-          httpClient,
-          authDialog: AuthDialog(baseContext),
-          page: Page({ ...baseContext, httpClient }),
+          ...fullContext,
+          features,
+          page: Page({ ...fullContext, features }),
       };
 
 export default context;

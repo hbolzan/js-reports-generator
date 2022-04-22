@@ -1,6 +1,4 @@
-if (window._ == undefined) {
-    window._ = require("lodash");
-}
+const _ = require("lodash");
 
 const hiccupAttrs = hiccup => hiccup ?
       (_.isObject(hiccup[1]) && ! _.isArray(hiccup[1]) ? { attrs: hiccup[1] } : null) :

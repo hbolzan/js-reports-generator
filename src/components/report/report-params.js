@@ -1,12 +1,13 @@
 import definitionToSettings from "../../adapters/report.js";
 
+const fetchOptions = {
+    mode: "cors",
+    errorMessage: "ATENÇÃO: O relatório selecionado não está disponível"
+};
+
 function Params(context, reportId) {
-    const { httpClient, config } = context,
-          paramsUrl = config.apiUrl(`reports/${ reportId }/params`),
-          fetchOptions = {
-              mode: "cors",
-              errorMessage: "ATENÇÃO: O relatório selecionado não está disponível"
-          };
+    const { httpClient, config, api } = context,
+          paramsUrl = config.apiUrl(api.reportParams(reportId));
 
     let params,
         pending,

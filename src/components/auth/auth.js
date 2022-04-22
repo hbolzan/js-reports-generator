@@ -22,8 +22,6 @@ function Auth(context) {
     }
 
     function handleAuthentication(res, topic) {
-        // data.auth = {};
-        // saveAuthData(data);
         if ( res.status == 200 ) {
             data.auth = JSON.parse(res.headers.get("auth"));
             saveAuthData(data);
@@ -62,6 +60,7 @@ function Auth(context) {
         data.auth = {};
         saveAuthData(data);
         refresh();
+        messageBroker.produce(topics.AUTH__SIGNED_OUT, {});
     }
 
     function refreshWhileYouCan(data) {
