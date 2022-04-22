@@ -11,10 +11,11 @@ function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBr
         nav: (args, feature) => () => {
             feature.nav(args);
         },
+        perform: (args, feature, view) => () => perform(args, feature, view),
         event: setListener,
     };
 
-    function setContent(args, feature, view, state) {
+    function setContent(args, feature, view) {
         const contentKeys = args.setContent.contentKeys,
               nodeIds = args.setContent.nodeIds || [];
         contentKeys?.forEach((k, index) => view.setContent(nodeIds[index], feature.getData(k)));
@@ -26,7 +27,7 @@ function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBr
 
     function fetchUrl(fetch, feature) {
         return config.apiUrl(
-            fetch.method === "GET" ?
+            ( fetch.method === "GET" && fetch.withPath ) ?
                 api.actionGet(fetch.from, feature.getData(fetch.withPath)) :
                 api.actionPerform(fetch.from)
         );
@@ -47,6 +48,11 @@ function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBr
         return response.json();
     }
 
+    async function fetchOne(fetch, feature) {
+        const content = await fetchPerform(fetch, feature);
+        feature.setData(fetch.into, content);
+    }
+
     async function fetchAll({ fetch }, feature) {
         if ( ! fetch ) {
             return {};
@@ -58,6 +64,17 @@ function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBr
             result.data = { ...result.data, [f.into]: content };
         }
         return result.data;
+    }
+
+    async function perform({ actions }, feature, view) {
+        let content;
+        for (const action of actions) {
+            if ( action.type === "fetch" ) {
+                content = await fetchOne(action, feature);
+            } else if ( action.type === "setContent" ) {
+                setContent(action, feature, view);
+            }
+        }
     }
 
     function setListener(args, feature, view) {
