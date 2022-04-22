@@ -2,6 +2,7 @@ import { isEmpty } from "../../logic/misc.js";
 
 const baseOptions = {
     mode: "cors",
+    headers: { 'Content-Type': 'application/json' },
 };
 
 function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBroker }) {
@@ -23,6 +24,12 @@ function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBr
 
     function gatherInputs({ gather }, feature) {
         gather?.forEach(g => feature.setData(g.into, document.getElementById(g.from).value));
+    }
+
+    function gatherChildren({ gather }, feature) {
+        const children = document.getElementById(gather.from).getElementsByTagName("input"),
+              data = Array.from(children).map(i => ({ id: i.id, name: i.name, value: i.value, checked: i.checked }));
+        feature.setData(gather.into, data);
     }
 
     function fetchUrl(fetch, feature) {
@@ -73,6 +80,8 @@ function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBr
                 content = await fetchOne(action, feature);
             } else if ( action.type === "setContent" ) {
                 setContent(action, feature, view);
+            } else if ( action.type === "gatherChildren" ) {
+                gatherChildren(action, feature);
             }
         }
     }
