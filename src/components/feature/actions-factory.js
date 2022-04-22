@@ -8,13 +8,17 @@ const baseOptions = {
 function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBroker }) {
 
     const actions = {
-        alert: (args, feature) => () => UIkit.modal.alert(args.message),
+        alert: (args, feature) => () => alert(args),
         nav: (args, feature) => () => {
             feature.nav(args);
         },
         perform: (args, feature, view) => () => perform(args, feature, view),
         event: setListener,
     };
+
+    function alert({ message }) {
+        UIkit.modal.alert(message);
+    }
 
     function setContent(args, feature, view) {
         const contentKeys = args.setContent.contentKeys,
@@ -73,16 +77,21 @@ function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBr
         return result.data;
     }
 
+    function alertFrom(action, feature) {
+        alert({ message: feature.getData(action.message.from) });
+    }
+
+    const performActions = {
+        fetch: async (action, feature) => await fetchOne(action, feature),
+        gather: (action, feature) => gatherInputs(action, feature),
+        alert: (action, feature) => alertFrom(action, feature),
+        gatherChildren,
+        setContent,
+    };
+
     async function perform({ actions }, feature, view) {
-        let content;
         for (const action of actions) {
-            if ( action.type === "fetch" ) {
-                content = await fetchOne(action, feature);
-            } else if ( action.type === "setContent" ) {
-                setContent(action, feature, view);
-            } else if ( action.type === "gatherChildren" ) {
-                gatherChildren(action, feature);
-            }
+            await performActions[action.type](action, feature, view);
         }
     }
 
