@@ -84,7 +84,7 @@ function groupTitle(grouping) {
           columns = header.match(/\<(.*?)\>/g)?.map(s => s.replaceAll("<", "").replaceAll(">", ""));
     return function (group) {
         const firstRow = group.rows[0];
-        return columns.reduce((s, col) => s.replaceAll(`<${ col }>`, firstRow[col]), header);
+        return columns?.reduce((s, col) => s.replaceAll(`<${ col }>`, firstRow[col]), header) || "";
     };
 }
 

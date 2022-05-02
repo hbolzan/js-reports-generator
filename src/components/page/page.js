@@ -1,18 +1,37 @@
 function Page(baseContext) {
-    const { UIkit, document, renderNodes, messageBroker, topics, MainIndex, ReportsIndex } = baseContext,
+    const { UIkit, document,  renderNodes, messageBroker, topics, MainIndex, ReportsIndex } = baseContext,
           self = {
               init,
               renderIndex,
               showReport: () => setReportContainerVisible(true),
-              hideReport: () => setReportContainerVisible(false),
+              hideReport: () => {
+                  setReportContainerVisible(false);
+                  clearReportBody();
+              },
               iFrameDocument,
           },
           context = { ...baseContext, page: self };
 
-    function renderIndex() {
+    function renderIndex(authData) {
         MainIndex(context)
             .index()
             .then(dom => dom.render(renderNodes.mainIndex));
+    }
+
+    function handleSignedIn(authData) {
+        document.getElementById(renderNodes.userButton).classList.remove("uk-invisible");
+        document.getElementById(renderNodes.userButtonNameContainer).innerHTML = authData.auth.username;
+        renderIndex();
+    }
+
+    function handleSignedOut() {
+        document.getElementById(renderNodes.userButton).classList.add("uk-invisible");
+        document.getElementById(renderNodes.userButtonNameContainer).innerHTML = "";
+    }
+
+    function clearReportBody() {
+        (iFrameDocument().getElementById(renderNodes.reportBody) || {})
+            .innerHTML = "";
     }
 
     function setReportContainerVisible(state) {
@@ -51,7 +70,9 @@ function Page(baseContext) {
         document.getElementById("auth-sign-out").onclick = () => messageBroker.produce(
             topics.AUTH__SIGN_OUT_REQUESTED, { source: self }
         );
-        messageBroker.listen(topics.AUTH__SIGNED_IN, renderIndex);
+        messageBroker.listen(topics.AUTH__SIGNED_IN, handleSignedIn);
+        messageBroker.listen(topics.AUTH__REFRESHED, handleSignedIn);
+        messageBroker.listen(topics.AUTH__SIGNED_OUT, handleSignedOut);
         renderIndex();
     }
 
