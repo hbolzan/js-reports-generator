@@ -56,6 +56,13 @@ function Page(baseContext) {
         frameWindow.print();
     }
 
+    function setListeners() {
+        messageBroker.listen(topics.AUTH__SIGNED_IN, handleSignedIn);
+        messageBroker.listen(topics.AUTH__REFRESHED, handleSignedIn);
+        messageBroker.listen(topics.AUTH__SIGNED_OUT, handleSignedOut);
+        messageBroker.listen(topics.AUTH__UNAUTHORIZED, handleSignedOut);
+    }
+
     function init() {
         if ( context.global.location.pathname === "/report.html" ) {
             return;
@@ -70,9 +77,7 @@ function Page(baseContext) {
         document.getElementById("auth-sign-out").onclick = () => messageBroker.produce(
             topics.AUTH__SIGN_OUT_REQUESTED, { source: self }
         );
-        messageBroker.listen(topics.AUTH__SIGNED_IN, handleSignedIn);
-        messageBroker.listen(topics.AUTH__REFRESHED, handleSignedIn);
-        messageBroker.listen(topics.AUTH__SIGNED_OUT, handleSignedOut);
+        setListeners();
         renderIndex();
     }
 
