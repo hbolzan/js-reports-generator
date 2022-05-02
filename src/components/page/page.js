@@ -1,5 +1,5 @@
 function Page(baseContext) {
-    const { UIkit, document,  renderNodes, messageBroker, topics, MainIndex, ReportsIndex } = baseContext,
+    const { UIkit, document, renderNodes, messageBroker, topics, MainIndex, ReportsIndex } = baseContext,
           self = {
               init,
               renderIndex,
