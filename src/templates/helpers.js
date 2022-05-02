@@ -27,7 +27,7 @@ const bodyAggrTr = (columns, row) => bodyRow(bodyTh, columns, row);
 const tBody = data => data.rows.reduce((body, row) => [...body, bodyTr(data.columns, row)], ["tbody"]);
 
 function lineBreaksToListItems(s) {
-    const items = s.split("\n");
+    const items = s?.split("\n") || [];
     if (items.length < 2) {
         return s;
     }

@@ -4,15 +4,34 @@ function Page(baseContext) {
               init,
               renderIndex,
               showReport: () => setReportContainerVisible(true),
-              hideReport: () => setReportContainerVisible(false),
+              hideReport: () => {
+                  setReportContainerVisible(false);
+                  clearReportBody();
+              },
               iFrameDocument,
           },
           context = { ...baseContext, page: self };
 
-    function renderIndex() {
+    function renderIndex(authData) {
         MainIndex(context)
             .index()
             .then(dom => dom.render(renderNodes.mainIndex));
+    }
+
+    function handleSignedIn(authData) {
+        document.getElementById(renderNodes.userButton).classList.remove("uk-invisible");
+        document.getElementById(renderNodes.userButtonNameContainer).innerHTML = authData.auth.username;
+        renderIndex();
+    }
+
+    function handleSignedOut() {
+        document.getElementById(renderNodes.userButton).classList.add("uk-invisible");
+        document.getElementById(renderNodes.userButtonNameContainer).innerHTML = "";
+    }
+
+    function clearReportBody() {
+        (iFrameDocument().getElementById(renderNodes.reportBody) || {})
+            .innerHTML = "";
     }
 
     function setReportContainerVisible(state) {
@@ -37,6 +56,13 @@ function Page(baseContext) {
         frameWindow.print();
     }
 
+    function setListeners() {
+        messageBroker.listen(topics.AUTH__SIGNED_IN, handleSignedIn);
+        messageBroker.listen(topics.AUTH__REFRESHED, handleSignedIn);
+        messageBroker.listen(topics.AUTH__SIGNED_OUT, handleSignedOut);
+        messageBroker.listen(topics.AUTH__UNAUTHORIZED, handleSignedOut);
+    }
+
     function init() {
         if ( context.global.location.pathname === "/report.html" ) {
             return;
@@ -51,7 +77,7 @@ function Page(baseContext) {
         document.getElementById("auth-sign-out").onclick = () => messageBroker.produce(
             topics.AUTH__SIGN_OUT_REQUESTED, { source: self }
         );
-        messageBroker.listen(topics.AUTH__SIGNED_IN, renderIndex);
+        setListeners();
         renderIndex();
     }
 

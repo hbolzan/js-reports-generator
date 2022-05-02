@@ -92,7 +92,7 @@ const GroupedDataTemplate = (context, settings) => {
                 ["div", { class: ["report-header"] },
                  ["h2", settings.title]],
 
-                ["table", { class: ["uk-table", "uk-table-small"] },
+                ["table", { class: ["uk-table", "uk-table-small"], style: { width: "100%" } },
                  ["thead", ["tr", ["td", ["div", { class: ["header-space"] }, "&nbsp;"]]]],
                  ["tbody",
                   ["tr", ["td", ["div", ...data.map(groupBody)]],],

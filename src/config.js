@@ -33,6 +33,8 @@ function Config({ _, templates }) {
             featuresBody: "features-body",
             reportCloseButton: "report-close-button",
             reportPrintButton: "report-print-button",
+            userButton: "user-button",
+            userButtonNameContainer: "user-button-name-container",
         },
 
         topics: {
