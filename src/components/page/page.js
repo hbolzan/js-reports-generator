@@ -1,5 +1,5 @@
 function Page(baseContext) {
-    const { UIkit, document, renderNodes, messageBroker, topics, MainIndex, ReportsIndex } = baseContext,
+    const { UIkit, config, document, renderNodes, messageBroker, topics, MainIndex, ReportsIndex } = baseContext,
           self = {
               init,
               renderIndex,
@@ -63,6 +63,16 @@ function Page(baseContext) {
         messageBroker.listen(topics.AUTH__UNAUTHORIZED, handleSignedOut);
     }
 
+    function setPageProperties() {
+        document.getElementById(renderNodes.versionContainer).innerHTML = `V${ config.version }`;
+        document.getElementById(renderNodes.reportContainer).style = "";
+        document.getElementById(renderNodes.reportCloseButton).onclick = self.hideReport;
+        document.getElementById(renderNodes.reportPrintButton).onclick = printReport;
+        document.getElementById("auth-sign-out").onclick = () => messageBroker.produce(
+            topics.AUTH__SIGN_OUT_REQUESTED, { source: self }
+        );
+    }
+
     function init() {
         if ( context.global.location.pathname === "/report.html" ) {
             return;
@@ -71,12 +81,7 @@ function Page(baseContext) {
         require("js-datepicker/dist/datepicker.min.css");
         UIkit.sticky(document.getElementById(renderNodes.pageHeader));
         self.hideReport();
-        document.getElementById(renderNodes.reportContainer).style = "";
-        document.getElementById(renderNodes.reportCloseButton).onclick = self.hideReport;
-        document.getElementById(renderNodes.reportPrintButton).onclick = printReport;
-        document.getElementById("auth-sign-out").onclick = () => messageBroker.produce(
-            topics.AUTH__SIGN_OUT_REQUESTED, { source: self }
-        );
+        setPageProperties();
         setListeners();
         renderIndex();
     }
