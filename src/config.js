@@ -35,6 +35,7 @@ function Config({ _, templates }) {
             reportPrintButton: "report-print-button",
             userButton: "user-button",
             userButtonNameContainer: "user-button-name-container",
+            versionContainer: "version-container",
         },
 
         topics: {
@@ -46,11 +47,13 @@ function Config({ _, templates }) {
         },
     };
 
-    const authUrl = (resource) => `${ settings.api.host }${ settings.api.authBaseUrl }/${ resource }`,
+    const version = '220503.1',
+          authUrl = (resource) => `${ settings.api.host }${ settings.api.authBaseUrl }/${ resource }`,
           apiUrl = (resource) => `${ settings.api.host }${ settings.api.baseUrl }/${ resource }`;
 
     return {
         ...settings,
+        version,
         authUrl,
         apiUrl,
     };
