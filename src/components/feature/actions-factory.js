@@ -20,6 +20,12 @@ function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBr
         UIkit.modal.alert(message);
     }
 
+    function setInputValues(args, feature, view) {
+        const contentKeys = args.setInputValues.contentKeys,
+              inputIds = args.setInputValues.inputIds || [];
+        contentKeys?.forEach((k, index) => document.getElementById(inputIds[index]).value = feature.getData(k));
+    }
+
     function setContent(args, feature, view) {
         const contentKeys = args.setContent.contentKeys,
               nodeIds = args.setContent.nodeIds || [];
@@ -77,21 +83,22 @@ function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBr
         return result.data;
     }
 
-    function alertFrom(action, feature) {
-        alert({ message: feature.getData(action.message.from) });
+    function alertFrom(step, feature) {
+        alert({ message: feature.getData(step.message.from) });
     }
 
-    const performActions = {
-        fetch: async (action, feature) => await fetchOne(action, feature),
-        gather: (action, feature) => gatherInputs(action, feature),
-        alert: (action, feature) => alertFrom(action, feature),
+    const performActionSteps = {
+        fetch: async (step, feature) => await fetchOne(step, feature),
+        gather: (step, feature) => gatherInputs(step, feature),
+        alert: (step, feature) => alertFrom(step, feature),
         gatherChildren,
         setContent,
+        setInputValues,
     };
 
-    async function perform({ actions }, feature, view) {
-        for (const action of actions) {
-            await performActions[action.type](action, feature, view);
+    async function perform({ steps }, feature, view) {
+        for (const step of steps) {
+            await performActionSteps[step.type](step, feature, view);
         }
     }
 

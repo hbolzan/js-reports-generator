@@ -72,7 +72,7 @@ function Auth(context) {
 
     function authorizationHeader() {
         const data = getAuthData();
-        return { "Authorization": `Bearer ${ data?.auth?.token }::${ browserFingerprint }`};
+        return { "Authorization": `Bearer ${ data?.auth?.token }::${ browserFingerprint }` };
     }
 
     function GET(url) {
