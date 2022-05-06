@@ -20,6 +20,12 @@ function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBr
         UIkit.modal.alert(message);
     }
 
+    function setInputValues(args, feature, view) {
+        const contentKeys = args.setInputValues.contentKeys,
+              inputIds = args.setInputValues.inputIds || [];
+        contentKeys?.forEach((k, index) => document.getElementById(inputIds[index]).value = feature.getData(k));
+    }
+
     function setContent(args, feature, view) {
         const contentKeys = args.setContent.contentKeys,
               nodeIds = args.setContent.nodeIds || [];
@@ -87,6 +93,7 @@ function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBr
         alert: (step, feature) => alertFrom(step, feature),
         gatherChildren,
         setContent,
+        setInputValues,
     };
 
     async function perform({ steps }, feature, view) {

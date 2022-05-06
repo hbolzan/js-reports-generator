@@ -18,10 +18,18 @@ function Page(baseContext) {
             .then(dom => dom.render(renderNodes.mainIndex));
     }
 
-    function handleSignedIn(authData) {
+    function showUserName(authData) {
         document.getElementById(renderNodes.userButton).classList.remove("uk-invisible");
         document.getElementById(renderNodes.userButtonNameContainer).innerHTML = authData.auth.username;
+    }
+
+    function handleSignedIn(authData) {
+        showUserName(authData);
         renderIndex();
+    }
+
+    function handleRefreshed(authData) {
+        showUserName(authData);
     }
 
     function handleSignedOut() {
@@ -58,7 +66,7 @@ function Page(baseContext) {
 
     function setListeners() {
         messageBroker.listen(topics.AUTH__SIGNED_IN, handleSignedIn);
-        messageBroker.listen(topics.AUTH__REFRESHED, handleSignedIn);
+        messageBroker.listen(topics.AUTH__REFRESHED, handleRefreshed);
         messageBroker.listen(topics.AUTH__SIGNED_OUT, handleSignedOut);
         messageBroker.listen(topics.AUTH__UNAUTHORIZED, handleSignedOut);
     }
