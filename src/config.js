@@ -26,6 +26,8 @@ function Config({ _, templates }) {
         renderNodes: {
             dialog: "dialog-body",
             mainIndex: "index-body",
+            mainIndexReportsTab: "main-index-reports-tab",
+            mainIndexFeaturesTab: "main-index-features-tab",
             pageHeader: "page-header",
             reportContainer: "report-container",
             reportIFrame: "report-iframe",
@@ -35,6 +37,8 @@ function Config({ _, templates }) {
             reportPrintButton: "report-print-button",
             userButton: "user-button",
             userButtonNameContainer: "user-button-name-container",
+            userSignOutMenu: "user-menu-auth-sign-out",
+            userChangePasswordMenu: "user-menu-change-password",
             versionContainer: "version-container",
         },
 
@@ -44,6 +48,8 @@ function Config({ _, templates }) {
             AUTH__REFRESHED: "AUTH.REFRESHED",
             AUTH__SIGN_OUT_REQUESTED: "AUTH.SIGN-OUT-REQUESTED",
             AUTH__UNAUTHORIZED: "AUTH.UNAUTHORIZED",
+
+            FEATURES__ACTIVATION_REQUESTED: "FEATURES.ACTIVATION_REQUESTED",
         },
     };
 

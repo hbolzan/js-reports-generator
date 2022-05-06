@@ -76,8 +76,11 @@ function Page(baseContext) {
         document.getElementById(renderNodes.reportContainer).style = "";
         document.getElementById(renderNodes.reportCloseButton).onclick = self.hideReport;
         document.getElementById(renderNodes.reportPrintButton).onclick = printReport;
-        document.getElementById("auth-sign-out").onclick = () => messageBroker.produce(
+        document.getElementById(renderNodes.userSignOutMenu).onclick = () => messageBroker.produce(
             topics.AUTH__SIGN_OUT_REQUESTED, { source: self }
+        );
+        document.getElementById(renderNodes.userChangePasswordMenu).onclick = () => messageBroker.produce(
+            topics.FEATURES__ACTIVATION_REQUESTED, { featureId: "change-password" }
         );
     }
 
