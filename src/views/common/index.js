@@ -26,13 +26,13 @@ const groupItem = (context, items, title, onClick) => ["li", { class: ["uk-paren
           return _.map(groups, (items, title) => groupItem(context, items, title, onClick));
       };
 
-function tabs(context, { reports, features }) {
+function tabs({ renderNodes }, { reports, features }) {
     return ["section",
             ["ul", { class: ["uk-subnav", "uk-subnav-pill"], private: { initSwitcher } },
              ["li", { class: ["uk-active"]},
-              ["a", { href: "#" }, "RELATÓRIOS"]],
+              ["a", { id: renderNodes.mainIndexReportsTab, href: "#" }, "RELATÓRIOS"]],
              ["li",
-              ["a", { href: "#" }, "FUNCIONALIDADES"]]],
+              ["a", { id: renderNodes.mainIndexFeaturesTab, href: "#" }, "FUNCIONALIDADES"]]],
             ["ul", { class: ["uk-switcher", "switcher-body-container"] },
              reports,
              features]];
