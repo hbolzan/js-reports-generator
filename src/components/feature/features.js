@@ -88,17 +88,21 @@ async function Feature(context, featureId) {
 
 function Features(context) {
 
-    const cached = {};
+    const { messageBroker, topics } = context,
+          cached = new Map();
+
+    messageBroker.listen(topics.AUTH__SIGNED_OUT, () => cached.clear());
 
     async function _get(featureId) {
-        if ( ! cached[featureId] ) {
-            cached[featureId]= await Feature(context, featureId);
+        if ( ! cached.get(featureId) ) {
+            cached.set(featureId, await Feature(context, featureId));
         }
-        return cached[featureId];
+        return cached.get(featureId);
     }
 
     return {
         get: _get,
+        clearCache: () => cached.clear(),
     };
 
 }

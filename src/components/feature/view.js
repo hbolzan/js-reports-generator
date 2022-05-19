@@ -1,12 +1,20 @@
 function View(context, view, feature) {
-    const { _, Dom, document, messageBroker, topics, actionsFactory } = context,
+    const { _, Dom, document, messageBroker, topics, actionsFactory, Mask } = context,
           { id, hiccup, actions, events } = view,
-          dom = Dom(context, hiccup),
+          dom = Dom({ ...context, alternativeNodeInitiator }, hiccup),
           node = document.getElementById(context.renderNodes.featuresBody),
           rendered = dom.appendToDomNode(node),
           state = { visible: true };
 
     let self;
+
+    const nodeInitiators = {
+        Mask: maskMethod => Mask(context)[maskMethod],
+    };
+
+    function alternativeNodeInitiator(key, value, nodeObj, context) {
+        return nodeObj.self;
+    }
 
     function setAction(action) {
         const element = document.getElementById(action.elementId);
