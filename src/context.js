@@ -1,6 +1,7 @@
 import Icons from "uikit/dist/js/uikit-icons";
 import UIkit from "uikit";
 import { v4 as uuidv4 } from "uuid";
+import { Grid } from 'ag-grid-community';
 import datepicker from "js-datepicker";
 import Inputmask from "inputmask";
 import Papa from "papaparse";
@@ -11,6 +12,7 @@ import HttpClient from "./components/http-client.js";
 import Auth from "./components/auth/auth.js";
 import AuthDialog from "./components/auth/auth-dialog.js";
 import Dom from "./components/dom/dom.js";
+import DataGrid from "./components/grid/grid.js";
 import Mask from "./components/report/mask.js";
 import DatePicker from "./components/report/date-picker.js";
 import Modal from "./components/modal.js";
@@ -61,6 +63,7 @@ const _ = require("lodash"),
           browserFingerprint,
           uuidGen,
           reportStyleSheetId: uuidGen(),
+          Grid,
 
           config,
           topics: config.topics,
@@ -72,6 +75,7 @@ const _ = require("lodash"),
           messageBroker,
           Modal,
           Dom,
+          DataGrid,
           ReportsIndex,
           ReportParams,
           ReportDialog,

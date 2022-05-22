@@ -29,6 +29,7 @@ function Auth(context) {
             messageBroker.produce(topic, data);
         } else {
             messageBroker.produce(topics.AUTH__UNAUTHORIZED, {});
+            messageBroker.produce(topics.AUTH__SIGNED_OUT, {});
         }
     };
 

@@ -41,7 +41,6 @@ function Dom(context, hiccup, css = "") {
             } else {
                 if (alternativeNodeInitiator) {
                     newNode = alternativeNodeInitiator(
-                        name,
                         value,
                         { id: node.attrs.id, self: node },
                         context

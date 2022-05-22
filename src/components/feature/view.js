@@ -1,19 +1,26 @@
 function View(context, view, feature) {
-    const { _, Dom, document, messageBroker, topics, actionsFactory, Mask } = context,
+    const { _, Dom, document, messageBroker, topics, actionsFactory, Mask, DatePicker, DataGrid } = context,
           { id, hiccup, actions, events } = view,
           dom = Dom({ ...context, alternativeNodeInitiator }, hiccup),
           node = document.getElementById(context.renderNodes.featuresBody),
           rendered = dom.appendToDomNode(node),
           state = { visible: true };
 
-    let self;
+    function alternativeNodeInitiator(init, nodeObj, context) {
 
-    const nodeInitiators = {
-        Mask: maskMethod => Mask(context)[maskMethod],
-    };
+        const nodeInitiators = {
+            Mask: maskMethod => Mask(context)[maskMethod](nodeObj, context),
+            DatePicker: () => DatePicker(context).init(null, nodeObj, context),
+            Grid: gridOptions => DataGrid(context, document.getElementById(nodeObj.id), gridOptions),
+        };
 
-    function alternativeNodeInitiator(key, value, nodeObj, context) {
-        return nodeObj.self;
+        _.each(init, (value, key) => {
+            const initiator = nodeInitiators[key];
+            if ( initiator ) {
+                return initiator(value);
+            }
+            return nodeObj.self;
+        });
     }
 
     function setAction(action) {
@@ -51,15 +58,13 @@ function View(context, view, feature) {
         show();
     }
 
-    self = {
+    init();
+    return {
         id,
         show,
         hide,
         setContent,
     };
-
-    init();
-    return self;
 }
 
 export default View;
