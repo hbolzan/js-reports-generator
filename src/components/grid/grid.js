@@ -1,10 +1,13 @@
-function CellRendererFactory(options) {
-    const { event, eventHandler, eventHandlerName, content } = options,
+import { toHtml } from "../../logic/hiccup.js";
+
+function CellRendererFactory(context, options) {
+    const { _, uuidGen } = context,
+          { event, eventHandler, eventHandlerName, content } = options,
           CellRenderer = new Function();
 
     function buildEGui() {
         const el = document.createElement("span");
-        el.innerHTML = content;
+        el.innerHTML = _.isArray(content) ? toHtml(content, uuidGen) : content;
         return el;
     }
 
@@ -34,48 +37,49 @@ function CellRendererFactory(options) {
     return CellRenderer;
 }
 
-function reviewColumnDef(columnDef) {
-    if ( columnDef.customCellParams ) {
-        return Object.assign(
-            {},
-            columnDef,
-            {
-                cellRenderer: CellRendererFactory({
-                    ...columnDef.customCellParams,
-                    eventHandlerName: `${ columnDef.field }CustomEventHandler`,
-                    eventHandler: function () { console.log(this.params.value); },
-                })
-            }
+function DataGrid(context, node, options) {
+    const { _, Grid } = context;
+
+    function reviewColumnDef(columnDef) {
+        if ( columnDef.customCellParams ) {
+
+            return {
+                ..._.omit(columnDef, "customCellParams"),
+                cellRenderer: CellRendererFactory(
+                    context,
+                    {
+                        ...columnDef.customCellParams,
+                        eventHandlerName: `${ columnDef.field }CustomEventHandler`,
+                        eventHandler: function () { console.log(this.params.value); },
+                    }
+                ),
+            };
+        }
+        return columnDef;
+    }
+
+    function gridComponents(defs) {
+        return defs.reduce(
+            (comps, def) => {
+                return {
+                    ...comps,
+                    ...(def.eventHandlerName ? { [def.eventHandlerName]: def.eventHandler } : {})
+                };
+            },
+            {}
         );
     }
-    return columnDef;
-}
 
-function components(defs) {
-    return defs.reduce(
-        (comps, def) => {
-            return {
-                ...comps,
-                ...(def.eventHandlerName ? { [def.eventHandlerName]: def.eventHandler } : {})
-            };
-        },
-        {}
-    );
-}
-
-function DataGrid({ Grid }, node, options) {
-
-    console.log(options);
-    const reviewedColumnDefs = options.columnDefs.map(reviewColumnDef),
+    const gridOptions = options.gridOptions;
+    const reviewedColumnDefs = gridOptions.columnDefs.map(reviewColumnDef),
           newOptions = Object.assign(
               {},
-              options,
+              gridOptions,
               {
                   columnDefs: reviewedColumnDefs,
-                  components: components(reviewedColumnDefs),
+                  components: gridComponents(reviewedColumnDefs),
               },
           );
-
     return new Grid(node, newOptions);
 }
 

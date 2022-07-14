@@ -11,7 +11,7 @@ function View(context, view, feature) {
         const nodeInitiators = {
             Mask: maskMethod => Mask(context)[maskMethod](nodeObj, context),
             DatePicker: () => DatePicker(context).init(null, nodeObj, context),
-            Grid: gridOptions => DataGrid(context, document.getElementById(nodeObj.id), gridOptions),
+            Grid: options => DataGrid(context, document.getElementById(nodeObj.id), options.options),
         };
 
         _.each(init, (value, key) => {
