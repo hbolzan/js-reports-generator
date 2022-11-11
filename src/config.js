@@ -54,7 +54,7 @@ function Config({ _, templates }) {
         },
     };
 
-    const version = '220506-1',
+    const version = '221026-1.dev',
           authUrl = (resource) => `${ settings.api.host }${ settings.api.authBaseUrl }/${ resource }`,
           apiUrl = (resource) => `${ settings.api.host }${ settings.api.baseUrl }/${ resource }`;
 
