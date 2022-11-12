@@ -1,5 +1,5 @@
 function View(context, view, feature) {
-    const { _, Dom, document, messageBroker, topics, actionsFactory, Mask, DatePicker, DataGrid } = context,
+    const { _, Dom, document, messageBroker, topics, actionsFactory, Mask, DatePicker, DataGrid, Upload } = context,
           { id, hiccup, actions, events } = view,
           dom = Dom({ ...context, alternativeNodeInitiator }, hiccup),
           node = document.getElementById(context.renderNodes.featuresBody),
@@ -12,6 +12,7 @@ function View(context, view, feature) {
             Mask: maskMethod => Mask(context)[maskMethod](nodeObj, context),
             DatePicker: () => DatePicker(context).init(null, nodeObj, context),
             Grid: options => DataGrid(context, document.getElementById(nodeObj.id), options.options),
+            Upload: () => Upload(context, nodeObj),
         };
 
         _.each(init, (value, key) => {

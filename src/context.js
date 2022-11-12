@@ -13,6 +13,7 @@ import Auth from "./components/auth/auth.js";
 import AuthDialog from "./components/auth/auth-dialog.js";
 import Dom from "./components/dom/dom.js";
 import DataGrid from "./components/grid/grid.js";
+import Upload from "./components/upload.js";
 import Mask from "./components/report/mask.js";
 import DatePicker from "./components/report/date-picker.js";
 import Modal from "./components/modal.js";
@@ -64,6 +65,7 @@ const _ = require("lodash"),
           uuidGen,
           reportStyleSheetId: uuidGen(),
           Grid,
+          Upload,
 
           config,
           topics: config.topics,
