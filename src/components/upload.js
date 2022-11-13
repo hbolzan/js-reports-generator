@@ -30,13 +30,13 @@ function Upload({ config, document, auth, UIkit }, nodeObj) {
                 bar.value = e.loaded;
             },
             completeAll: () => {
-                console.log('completeAll', arguments);
+                const element = document.getElementById(nodeObj.id);
 
                 setTimeout(function() {
                     bar.setAttribute('hidden', 'hidden');
                 }, 1000);
 
-                alert('Upload Completed');
+                element.onCompleteAll();
             },
 
         }
