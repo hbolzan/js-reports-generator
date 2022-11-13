@@ -1,13 +1,18 @@
-function Upload({ document, UIkit }, nodeObj) {
+function Upload({ config, document, auth, UIkit }, nodeObj) {
     console.log(nodeObj);
     console.log(`#${nodeObj.id }`);
-    const upload = document.getElementById(nodeObj.id),
-          bar = document.getElementById(nodeObj.self.private.progressBarId);
+    const priv = nodeObj.self.private,
+          { progressBarId, receiveUploadActionId } = priv,
+          upload = document.getElementById(nodeObj.id),
+          bar = document.getElementById(progressBarId);
     UIkit.upload(
         upload,
         {
-            url: "",
+            url: config.apiUrl(config.api.actionPerform(receiveUploadActionId)),
             multiple: true,
+            beforeSend: env => {
+                env.headers = auth.authorizationHeader();
+            },
             complete: () => {
                 console.log("complete", arguments);
             },
