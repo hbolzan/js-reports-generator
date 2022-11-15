@@ -1,6 +1,4 @@
-function Upload({ config, document, auth, UIkit }, nodeObj) {
-    console.log(nodeObj);
-    console.log(`#${nodeObj.id }`);
+function Upload({ config, document, uuidGen, auth, UIkit }, nodeObj) {
     const priv = nodeObj.self.private,
           { progressBarId, receiveUploadActionId } = priv,
           upload = document.getElementById(nodeObj.id),
@@ -9,34 +7,33 @@ function Upload({ config, document, auth, UIkit }, nodeObj) {
         upload,
         {
             url: config.apiUrl(config.api.actionPerform(receiveUploadActionId)),
-            multiple: true,
+            multiple: false,
             beforeSend: env => {
-                env.headers = auth.authorizationHeader();
+                const uploadId = uuidGen(),
+                      element = document.getElementById(nodeObj.id);
+                element.lastUploadId = uploadId;
+                env.headers = Object.assign({}, auth.authorizationHeader(), { uploadId });
             },
             complete: () => {
-                console.log("complete", arguments);
             },
             loadStart: e => {
-                console.log('loadStart', arguments);
-
                 bar.removeAttribute('hidden');
                 bar.max = e.total;
                 bar.value = e.loaded;
             },
             progress: e => {
-                console.log('progress', arguments);
-
                 bar.max = e.total;
                 bar.value = e.loaded;
             },
             completeAll: () => {
-                const element = document.getElementById(nodeObj.id);
-
                 setTimeout(function() {
                     bar.setAttribute('hidden', 'hidden');
                 }, 1000);
 
-                element.onCompleteAll();
+                const element = document.getElementById(nodeObj.id);
+                if ( element.onCompleteAll ) {
+                    element.onCompleteAll({}, { uploadId: element.lastUploadId });
+                }
             },
 
         }
