@@ -4,7 +4,8 @@ function View(context, view, feature) {
           dom = Dom({ ...context, alternativeNodeInitiator }, hiccup),
           node = document.getElementById(context.renderNodes.featuresBody),
           rendered = dom.appendToDomNode(node),
-          state = { visible: true };
+          state = { visible: true },
+          self = {};
 
     function alternativeNodeInitiator(init, nodeObj, context) {
 
@@ -59,13 +60,15 @@ function View(context, view, feature) {
         show();
     }
 
-    init();
-    return {
+    Object.assign(self, {
         id,
         show,
         hide,
         setContent,
-    };
+    });
+
+    init();
+    return self;
 }
 
 export default View;
