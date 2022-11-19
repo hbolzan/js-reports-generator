@@ -1,6 +1,7 @@
 function Auth(context) {
     const data = {},
           { global, config, browserFingerprint, messageBroker, topics } = context,
+          fetch = global.fetch,
           signInUrl = config.authUrl(config.api.authSignIn),
           refreshUrl = config.authUrl(config.api.authRefresh),
           storageName = getStorageName(browserFingerprint);
@@ -29,6 +30,7 @@ function Auth(context) {
             messageBroker.produce(topic, data);
         } else {
             messageBroker.produce(topics.AUTH__UNAUTHORIZED, {});
+            messageBroker.produce(topics.AUTH__SIGNED_OUT, {});
         }
     };
 
@@ -91,6 +93,7 @@ function Auth(context) {
 
     refresh();
     messageBroker.listen(topics.AUTH__SIGN_OUT_REQUESTED, signOut);
+    messageBroker.listen(topics.AUTH__REFRESH_REQUESTED, refresh);
 
     return {
         signIn,

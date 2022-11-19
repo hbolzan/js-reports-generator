@@ -47,13 +47,14 @@ function Config({ _, templates }) {
             AUTH__SIGNED_OUT: "AUTH.SIGNED-OUT",
             AUTH__REFRESHED: "AUTH.REFRESHED",
             AUTH__SIGN_OUT_REQUESTED: "AUTH.SIGN-OUT-REQUESTED",
+            AUTH__REFRESH_REQUESTED: "AUTH.REFRESH-REQUESTED",
             AUTH__UNAUTHORIZED: "AUTH.UNAUTHORIZED",
 
             FEATURES__ACTIVATION_REQUESTED: "FEATURES.ACTIVATION_REQUESTED",
         },
     };
 
-    const version = '220506-1',
+    const version = '221026-1.dev',
           authUrl = (resource) => `${ settings.api.host }${ settings.api.authBaseUrl }/${ resource }`,
           apiUrl = (resource) => `${ settings.api.host }${ settings.api.baseUrl }/${ resource }`;
 

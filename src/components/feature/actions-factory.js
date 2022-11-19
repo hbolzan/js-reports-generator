@@ -88,6 +88,7 @@ function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBr
     }
 
     const performActionSteps = {
+        nav: (step, feature) => feature.nav(step.args),
         fetch: async (step, feature) => await fetchOne(step, feature),
         gather: (step, feature) => gatherInputs(step, feature),
         alert: (step, feature) => alertFrom(step, feature),
@@ -111,10 +112,10 @@ function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBr
     function newAction(action, view, feature) {
         const { type, event, args } = action,
               mainAction = actions[type](args, feature, view);
-        return  async () => {
+        return async (e, eventData) => {
             gatherInputs(args, feature);
             const data = await fetchAll(args, feature);
-            feature.mergeData(data);
+            feature.mergeData({ ...data, ...eventData });
             mainAction();
         };
     }

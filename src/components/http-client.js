@@ -41,6 +41,7 @@ function HttpClient(context) {
     function request(method, uri, options) {
         return fetch(uri, requestOptions({ method }, options))
             .then(res => validateResponse(uri, res, options.errorMessage));
+        // messageBroker.produce(topics.AUTH__REFRESH_REQUESTED, {});
     }
 
     const GET = _.partial(request, "GET"),

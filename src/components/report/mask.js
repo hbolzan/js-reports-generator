@@ -1,17 +1,17 @@
-const options = {
+const baseOptions = {
     radixPoint: ",",
     groupSeparator: ".",
     numericInput: true,
 };
 
-const initMask = ({ id }, { Inputmask, document }, alias) => {
-    return Inputmask(alias, options).mask(document.getElementById(id));
+const initMask = ({ id }, { Inputmask, document }, alias, options = {}) => {
+    return Inputmask(alias, { ...baseOptions, ...options }).mask(document.getElementById(id));
 };
 
 function Mask({ Inputmask }) {
     return {
         int: (node, context) => initMask(node, context, "integer"),
-        float: (node, context) => initMask(node, context, "numeric"),
+        float: (node, context, options = {}) => initMask(node, context, "numeric", options),
     };
 }
 

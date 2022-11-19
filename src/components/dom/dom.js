@@ -1,7 +1,7 @@
 import { hiccupToObj, objToHtml, indexNodes } from "../../logic/hiccup.js";
 
 function Dom(context, hiccup, css = "") {
-    const { document, uuidGen } = context,
+    const { document, uuidGen, alternativeNodeInitiator } = context,
           asObj = hiccupToObj(hiccup, uuidGen),
           hiccupHashMap = indexNodes(asObj),
           asHtml = objToHtml(asObj),
@@ -38,6 +38,14 @@ function Dom(context, hiccup, css = "") {
                     { id: node.attrs.id, self: node },
                     context,
                 ) || newNode;
+            } else {
+                if (alternativeNodeInitiator) {
+                    newNode = alternativeNodeInitiator(
+                        value,
+                        { id: node.attrs.id, self: node },
+                        context
+                    );
+                }
             }
         });
         return newNode;
