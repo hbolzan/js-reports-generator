@@ -13,6 +13,9 @@ function Upload({ config, document, uuidGen, auth, UIkit }, nodeObj) {
                       element = document.getElementById(nodeObj.id);
                 element.lastUploadId = uploadId;
                 env.headers = Object.assign({}, auth.authorizationHeader(), { uploadId });
+                if ( element.onBeforeSend ) {
+                    element.onBeforeSend();
+                }
             },
             complete: () => {
             },
