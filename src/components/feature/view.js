@@ -55,6 +55,11 @@ function View(context, view, feature) {
         return dom.render(parentId);
     }
 
+    function setVisibility(nodeId, visible) {
+        console.log(nodeId, visible);
+        document.getElementById(nodeId).hidden = ! visible;
+    }
+
     function init() {
         setActions();
         show();
@@ -65,6 +70,7 @@ function View(context, view, feature) {
         show,
         hide,
         setContent,
+        setVisibility,
     });
 
     init();

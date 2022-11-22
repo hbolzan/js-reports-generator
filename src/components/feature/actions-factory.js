@@ -32,6 +32,10 @@ function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBr
         contentKeys?.forEach((k, index) => view.setContent(nodeIds[index], feature.getData(k)));
     }
 
+    function setVisibility({ visibility }, feature, view) {
+        view.setVisibility(visibility.nodeId, feature.getData(visibility.visible));
+    }
+
     function gatherInputs({ gather }, feature) {
         gather?.forEach(g => feature.setData(g.into, document.getElementById(g.from).value));
     }
@@ -94,6 +98,7 @@ function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBr
         alert: (step, feature) => alertFrom(step, feature),
         gatherChildren,
         setContent,
+        setVisibility,
         setInputValues,
     };
 
