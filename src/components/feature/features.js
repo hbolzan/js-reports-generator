@@ -42,6 +42,10 @@ async function Feature(context, featureId) {
         state.active.show();
     }
 
+    function showFirstView() {
+        show(0);
+    }
+
     function showNextView() {
         const nextOrder = (state.activeViewOrder ?? -1) + 1;
         if ( nextOrder < state.definition.views.length ) {
@@ -56,9 +60,15 @@ async function Feature(context, featureId) {
         }
     }
 
+    function showLastView() {
+        show(state.definition.views.length - 1);
+    }
+
     const navActions = {
+        first: showFirstView,
         next: showNextView,
         prior: showPriorView,
+        last: showLastView,
     };
 
     function nav(actionArgs) {
