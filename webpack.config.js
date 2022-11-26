@@ -28,6 +28,10 @@ module.exports = {
             ignored: "**/.#*"
         },
         proxy: {
+            "/version": {
+                target: "http://localhost:8080",
+                router: () => "http://127.0.0.1:3000",
+            },
             "/api": {
                 target: "http://localhost:8080",
                 router: () => "http://127.0.0.1:3000",

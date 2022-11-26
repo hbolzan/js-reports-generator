@@ -1,16 +1,26 @@
 function Page(baseContext) {
-    const { UIkit, config, document, renderNodes, messageBroker, topics, MainIndex, ReportsIndex } = baseContext,
-          self = {
-              init,
-              renderIndex,
-              showReport: () => setReportContainerVisible(true),
-              hideReport: () => {
-                  setReportContainerVisible(false);
-                  clearReportBody();
-              },
-              iFrameDocument,
-          },
-          context = { ...baseContext, page: self };
+    const {
+        UIkit,
+        config,
+        document,
+        renderNodes,
+        messageBroker,
+        topics,
+        httpClient,
+        MainIndex,
+        ReportsIndex
+    } = baseContext,
+        self = {
+            init,
+            renderIndex,
+            showReport: () => setReportContainerVisible(true),
+            hideReport: () => {
+                setReportContainerVisible(false);
+                clearReportBody();
+            },
+            iFrameDocument,
+        },
+        context = { ...baseContext, page: self };
 
     function renderIndex(authData) {
         MainIndex(context)
@@ -44,8 +54,8 @@ function Page(baseContext) {
 
     function setReportContainerVisible(state) {
         const el = document.getElementById(renderNodes.reportContainer);
-        if ( el ) {
-            el.hidden = ! state;
+        if (el) {
+            el.hidden = !state;
         }
     }
 
@@ -71,8 +81,9 @@ function Page(baseContext) {
         messageBroker.listen(topics.AUTH__UNAUTHORIZED, handleSignedOut);
     }
 
-    function setPageProperties() {
-        document.getElementById(renderNodes.versionContainer).innerHTML = `V${ config.version }`;
+    function setPageProperties(backendVersion) {
+        document.getElementById(renderNodes.versionContainer)
+            .innerHTML = `FE-${config.version} + BE-${ backendVersion.version }`;
         document.getElementById(renderNodes.reportContainer).style = "";
         document.getElementById(renderNodes.reportCloseButton).onclick = self.hideReport;
         document.getElementById(renderNodes.reportPrintButton).onclick = printReport;
@@ -85,7 +96,7 @@ function Page(baseContext) {
     }
 
     function init() {
-        if ( context.global.location.pathname === "/report.html" ) {
+        if (context.global.location.pathname === "/report.html") {
             return;
         }
         require("uikit/dist/css/uikit.min.css");
@@ -94,7 +105,7 @@ function Page(baseContext) {
         require("js-datepicker/dist/datepicker.min.css");
         UIkit.sticky(document.getElementById(renderNodes.pageHeader));
         self.hideReport();
-        setPageProperties();
+        httpClient.GET(config.api.version, { mode: "cors" }).then(r => r.json()).then(setPageProperties);
         setListeners();
         renderIndex();
     }
