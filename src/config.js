@@ -10,6 +10,7 @@ function Config({ _, templates }) {
 
         api: {
             host: host(),
+            version: "/version",
             baseUrl: "/api/v1",
             authBaseUrl: "/auth",
             authSignIn: "sign-in",
@@ -54,7 +55,7 @@ function Config({ _, templates }) {
         },
     };
 
-    const version = '221026-1.dev',
+    const version = '221125-A',
           authUrl = (resource) => `${ settings.api.host }${ settings.api.authBaseUrl }/${ resource }`,
           apiUrl = (resource) => `${ settings.api.host }${ settings.api.baseUrl }/${ resource }`;
 
