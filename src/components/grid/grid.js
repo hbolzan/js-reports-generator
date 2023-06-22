@@ -1,7 +1,7 @@
 import { toHtml } from "../../logic/hiccup.js";
 
 function CellRendererFactory(context, options) {
-    const { _, uuidGen } = context,
+    const { _, uuidGen, document } = context,
           { event, eventHandler, eventHandlerName, content } = options,
           CellRenderer = new Function();
 
@@ -42,6 +42,7 @@ function DataGrid(context, node, options) {
 
     function reviewColumnDef(columnDef) {
         if ( columnDef.customCellParams ) {
+            const eventHandlerName = `${columnDef.field }CustomEventHandler`;
 
             return {
                 ..._.omit(columnDef, "customCellParams"),
@@ -49,8 +50,8 @@ function DataGrid(context, node, options) {
                     context,
                     {
                         ...columnDef.customCellParams,
-                        eventHandlerName: `${ columnDef.field }CustomEventHandler`,
-                        eventHandler: function () { console.log(this.params.value); },
+                        eventHandlerName,
+                        eventHandler: function () { console.log(eventHandlerName, this.params.value); },
                     }
                 ),
             };
