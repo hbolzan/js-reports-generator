@@ -1,4 +1,11 @@
-import { toHtml } from "../../logic/hiccup.js";
+import { _, toHtml } from "../../logic/hiccup.js";
+
+Date.prototype.addDays = function(days) {
+    const date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+};
+const futureDate = days => (new Date()).addDays(days);
 
 function CellRendererFactory(context, options) {
     const { _, uuidGen, document } = context,
@@ -71,17 +78,36 @@ function DataGrid(context, node, options) {
         );
     }
 
-    const gridOptions = options.gridOptions;
+    function overlayLoadingTemplate() {
+        return `
+        <div class="uk-card uk-body">
+            <div class="uk-align-center uk-grid-small uk-child-width-auto uk-margin" uk-grid uk-countdown="date: ${futureDate(1)}">
+                <div><div class="uk-countdown-number uk-countdown-seconds"></div></div>
+            </div>
+            <p>Calculando. Essa operação pode demorar um pouco. Por favor, aguarde...</p>
+            <div uk-spinner></div>
+        </div>`;
+    };
+
+    const gridOptions = {
+        ...options.gridOptions,
+        overlayLoadingTemplate: overlayLoadingTemplate(),
+    };
     const reviewedColumnDefs = gridOptions.columnDefs.map(reviewColumnDef),
           newOptions = Object.assign(
               {},
-              gridOptions,
+              _.omit(gridOptions, ["loading"]),
               {
                   columnDefs: reviewedColumnDefs,
                   components: gridComponents(reviewedColumnDefs),
               },
           );
-    return new Grid(node, newOptions);
+    const grid = Grid.createGrid(node, newOptions);
+    node.attributes.getGrid = () => grid;
+    if (gridOptions.loading) {
+        grid.showLoadingOverlay();
+    }
+    return grid;
 }
 
 export default DataGrid;

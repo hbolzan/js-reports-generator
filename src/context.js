@@ -1,7 +1,7 @@
 import Icons from "uikit/dist/js/uikit-icons";
 import UIkit from "uikit";
 import { v4 as uuidv4 } from "uuid";
-import { Grid } from 'ag-grid-community';
+const Grid = require("ag-grid-community");
 import datepicker from "js-datepicker";
 import Inputmask from "inputmask";
 import Papa from "papaparse";

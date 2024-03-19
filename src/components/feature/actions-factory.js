@@ -32,6 +32,11 @@ function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBr
         contentKeys?.forEach((k, index) => view.setContent(nodeIds[index], feature.getData(k)));
     }
 
+    function setState({ setState }, feature) {
+        const { data, into } = setState;
+        feature.setData(into, data);
+    }
+
     function setVisibility({ visibility }, feature, view) {
         view.setVisibility(visibility.nodeId, feature.getData(visibility.visible));
     }
@@ -91,15 +96,23 @@ function ActionsFactory({ _, document, UIkit, config, api, httpClient, messageBr
         alert({ message: feature.getData(step.message.from) });
     }
 
+    function gridAction({ grid }, feature) {
+        const { parentNodeId, method, args } = grid;
+        const api = document.getElementById(parentNodeId).attributes.getGrid();
+        api[method](...args);
+    }
+
     const performActionSteps = {
         nav: (step, feature) => feature.nav(step.args),
         fetch: async (step, feature) => await fetchOne(step, feature),
         gather: (step, feature) => gatherInputs(step, feature),
         alert: (step, feature) => alertFrom(step, feature),
         gatherChildren,
+        setState,
         setContent,
         setVisibility,
         setInputValues,
+        gridAction,
     };
 
     async function perform({ steps }, feature, view) {

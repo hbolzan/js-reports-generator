@@ -23,23 +23,23 @@ module.exports = {
         filename: 'bundle.js'
     },
     devServer: {
-        contentBase: './dist',
-        watchOptions: {
-            ignored: "**/.#*"
-        },
-        proxy: {
-            "/version": {
+        static: './dist',
+        proxy: [
+            {
+                context: ["/version"],
                 target: "http://localhost:8080",
                 router: () => "http://127.0.0.1:3000",
             },
-            "/api": {
+            {
+                context: ["/api"],
                 target: "http://localhost:8080",
                 router: () => "http://127.0.0.1:3000",
             },
-            "/auth": {
+            {
+                context: ["/auth"],
                 target: "http://localhost:8080",
                 router: () => "http://127.0.0.1:3000",
             },
-        }
+        ]
     }
 };

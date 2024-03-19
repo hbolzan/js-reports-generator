@@ -51,8 +51,8 @@ function View(context, view, feature) {
 
     function setContent(parentId, _content) {
         const content = _.isArray(_content) ? _content : ["span", _content];
-        const dom = context.Dom(context, content);
-        return dom.render(parentId);
+        const contentDom = context.Dom({ ...context, alternativeNodeInitiator }, content);
+        return contentDom.render(parentId);
     }
 
     function setVisibility(nodeId, visible) {

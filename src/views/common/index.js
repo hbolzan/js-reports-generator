@@ -9,7 +9,7 @@ function groupContent(context, items, onClick) {
         item => [
             "li",
             {
-                class: ["uk-active"],
+                class: ["uk-active", "uk-text-small"],
                 style: { cursor: "pointer" },
                 onclick: () => onClick(context, item.id)
             },
@@ -19,7 +19,7 @@ function groupContent(context, items, onClick) {
 }
 
 const groupItem = (context, items, title, onClick) => ["li", { class: ["uk-parent", "uk-active"]},
-                                                       ["a", { style: { fontSize: "medium", fontWeight: "400", }}, capitalizeFirstLetter(title || "Outros")],
+    ["a", { class: ["uk-text-default", "uk-text-normal"]}, capitalizeFirstLetter(title || "Outros")],
                                                        ["ul", { class: ["uk-nav-sub", "uk-list", "uk-list-striped", "uk-text-small"] },
                                                         ...groupContent(context, items, onClick)]],
       groupsList = (context, groups, onClick) => {

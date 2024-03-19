@@ -100,8 +100,8 @@ function Page(baseContext) {
             return;
         }
         require("uikit/dist/css/uikit.min.css");
-        require("ag-grid-community/dist/styles/ag-grid.css");
-        require("ag-grid-community/dist/styles/ag-theme-alpine.css");
+        require("ag-grid-community/styles/ag-grid.css");
+        require("ag-grid-community/styles/ag-theme-alpine.css");
         require("js-datepicker/dist/datepicker.min.css");
         UIkit.sticky(document.getElementById(renderNodes.pageHeader));
         self.hideReport();
