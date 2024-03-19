@@ -44,6 +44,65 @@ function CellRendererFactory(context, options) {
     return CellRenderer;
 }
 
+// source: https://blog.ag-grid.com/exporting-ag-grid-to-pdf/
+function GridToPdf(gridApi) {
+    function headersToExport() {
+        const columns = gridApi.getAllDisplayedColumns();
+
+        return columns.map((column) => {
+            const { field } = column.getColDef();
+            const sort = column.getSort();
+            const headerNameUppercase = field[0].toUpperCase() + field.slice(1);
+            const headerCell = {
+                text: headerNameUppercase + (sort ? ` (${sort})` : ''),
+            };
+            return headerCell;
+        });
+    }
+
+    function rowsToExport() {
+        const columns = gridApi.getAllDisplayedColumns();
+
+        const cellToExport = (column, node) => ({
+            text: gridApi.getValue(column, node) ?? '',
+        });
+
+        const rows = [];
+        gridApi.forEachNodeAfterFilterAndSort((node) => {
+            const row = columns.map((column) =>
+                cellToExport(column, node)
+            );
+            rows.push(row);
+        });
+
+        return rows;
+    }
+
+    function getDocument() {
+        const columns = gridApi.getAllDisplayedColumns();
+        const headerRow = headersToExport();
+        const rows = rowsToExport();
+
+        return {
+            pageOrientation: 'landscape', // can also be 'portrait'
+            content: [
+                {
+                    table: {
+                        headerRows: 1,
+                        widths: `${100 / columns.length}%`,
+                        body: [headerRow, ...rows],
+                        heights: (rowIndex) => (rowIndex === 0 ? 40 : 15),
+                    },
+                },
+            ],
+        };
+    }
+
+    return {
+        toPdf: () => pdfMake.createPdf(getDocument()).download(),
+    };
+}
+
 function DataGrid(context, node, options) {
     const { _, Grid } = context;
 
@@ -103,6 +162,7 @@ function DataGrid(context, node, options) {
               },
           );
     const grid = Grid.createGrid(node, newOptions);
+    grid.toPdf = GridToPdf(grid).toPdf;
     node.attributes.getGrid = () => grid;
     if (gridOptions.loading) {
         grid.showLoadingOverlay();
